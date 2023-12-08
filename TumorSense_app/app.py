@@ -1,37 +1,4 @@
 
-# from flask import Flask, render_template, request
-# from TumorSenseV1 import TumorSense
-
-# app = Flask(__name__)
-# model = TumorSense()
-
-# @app.route('/')
-# def index():
-#     return render_template('index.html')
-
-# @app.route('/predict', methods=['POST'])
-# def predict():
-#     if request.method == 'POST':
-# #         # Get input data from the form
-#         data = request.form['input_data']
-
-# #         # Process the input data (if needed)
-# #       TODO: validate input data 
-
-
-
-# #         # Make predictions using your model
-#             # prediction = model.predict(data)
-
-#     return render_template('index.html', prediction=data)
-    
-
-# #         return render_template('indyex.html', prediction=prediction)
-
-# if __name__ == '__main__':
-#     app.run(debug=True, port=5400)
-
-
 from flask import Flask, render_template, request
 from TumorSenseV1 import TumorSense
 from werkzeug.utils import secure_filename
