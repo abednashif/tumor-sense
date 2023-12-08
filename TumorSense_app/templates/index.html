@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+    <title>Your ML Model Website</title>
+</head>
+<body>
+    <h1>Your ML Model Website</h1>
+    <form method="POST" action="/predict" enctype="multipart/form-data">
+        <label for="input_data">Upload Image:</label>
+        <input type="file" name="input_data" id="input_data" accept="image/*" required>
+        <br>
+        <input type="submit" value="Predict">
+    </form>
+    {% if prediction %}
+        <p>Prediction: {{ prediction }}</p>
+    {% endif %}
+</body>
+</html>
