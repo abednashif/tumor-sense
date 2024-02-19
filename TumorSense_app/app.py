@@ -54,7 +54,17 @@ def predict():
                 return 'Error: File not found'
             
             return render_template('index.html', prediction=prediction)
+        
+@app.route('/render', methods=['GET'])
+def view_model():
+    return render_template('render.html')
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5400)
+    app.run(debug=True, port=5700)
 
+'''
+    To run the app:
+        1. Open a terminal
+        2. execute "python app.py"
+        3. copy or press the link or paste "http://127.0.0.1:5700 or http://localhost:5700" in the browser
+'''
