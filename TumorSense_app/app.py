@@ -17,12 +17,15 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 @app.route('/')
 def index():
     return render_template('index.html')
+
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -54,10 +57,12 @@ def predict():
                 return 'Error: File not found'
             
             return render_template('index.html', prediction=prediction)
-        
+
+
 @app.route('/render', methods=['GET'])
 def view_model():
     return render_template('render.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5700)
