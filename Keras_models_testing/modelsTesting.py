@@ -20,16 +20,13 @@ validation_set = validation_data_gen.flow_from_directory(directory="../../Datase
                                                         class_mode='categorical',
                                                         batch_size=32)
 
-# Get all available Keras Applications models
-all_models = [model for model in dir(applications) if callable(getattr(applications, model))]
+# Specify models to test
+models_to_test = ['ResNet50', 'VGG16', 'EfficientNetB6']
 
-# Test each model
+# Test each specified model
 results = {}
-for model_name in all_models:
-    if 'ResNet' in model_name or 'Inception' in model_name or 'Xception' in model_name or 'VGG' in model_name:  # These models require input shape (224, 224, 3)
-        model = getattr(applications, model_name)(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
-    else:
-        continue  # Skip models that don't have (224, 224, 3) input shape
+for model_name in models_to_test:
+    model = getattr(applications, model_name)(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
 
     x = model.output
     x = tf.keras.layers.GlobalAveragePooling2D()(x)
