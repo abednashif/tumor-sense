@@ -569,9 +569,28 @@
     </div>
 
     <div class="header-bar col-lg-12 p-3 d-flex align-items-center justify-content-between">
-        <h1 class="mb-0">TumorSense</h1>
-        <div class="d-flex login-container">
-            <span>Login</span>
+        <a class="mb-0" href={{ url_for('index') }}>TumorSense</a>
+
+        <div class="dropdown">
+            <input type="checkbox" class="sr-only hidden-input" id="dropdown-toggle">
+            <label for="dropdown-toggle" class="avatar-label">
+                <img class="user-image user-select-none " draggable="false" src="{{ url_for('static', filename='images/default_avatar.jpg') }}" alt="User Avatar">
+            </label>
+            <div class="dropdown-content">
+                <div class="user-info">
+                    <span class="username">
+                        {% print("Doctor 1") %}
+                    </span>
+                </div>
+                <div class="preferences-content">
+                    <!-- Theme change options -->
+                    <select data-theme-picker class="btn btn-secondary dropdown-toggle" name="themepicker" id="theme">
+                        <option value="💻">System</option>
+                        <option value="☀️">Light</option>
+                        <option value="🌑">Dark</option>
+                    </select>
+                </div>
+            </div>
         </div>
     </div>
 

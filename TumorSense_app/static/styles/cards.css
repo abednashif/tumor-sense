@@ -1,12 +1,13 @@
 
 .card {
     position: relative;
-    width: 270px;
-    height: 250px;
+    width: 28ch;
+    height: 35ch;
+    padding: 1em;
     /*border: 1px solid rgba(0, 0, 0, 0.2);*/
     overflow: hidden;
     margin-inline: 3ch;
-    background-color: #dddddd;
+    background-color: var(--card-bg);
     border-radius: var(--main-border-radius);
     /*border: 3px solid transparent;*/
     /*border-image-slice: 1;*/
@@ -14,12 +15,24 @@
     /*animation: borderAnimation 4s infinite;*/
 }
 
-.card-content {
-  padding: 20px;
+.gif{
+    height: 12ch;
+    width: 12ch;
+    transform: translateY(-5px);
+    border-radius: var(--main-border-radius);
 }
+
+/*.card-content {*/
+/*  padding: 20px;*/
+/*}*/
 
 .card-title{
     font-size: 30px;
+    color: var(--card-text);
+}
+
+.card-text{
+    color: var(--card-text);
 }
 
 .card-content h2 {
