@@ -1,7 +1,8 @@
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_file
 from TumorSenseV1 import TumorSense
 from werkzeug.utils import secure_filename
+from cryptography.fernet import Fernet
 import os
 
 app = Flask(__name__)
@@ -10,12 +11,21 @@ model = TumorSense()
 current_directory = os.path.dirname(os.path.abspath(__file__))
 
 UPLOAD_FOLDER = os.path.join(current_directory, 'uploads')
+ENCRYPTED_FOLDER = os.path.join(current_directory, 'encrypted')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
+for folder in [UPLOAD_FOLDER, ENCRYPTED_FOLDER]:
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['ENCRYPTED_FOLDER'] = ENCRYPTED_FOLDER
 
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
+
+key = Fernet.generate_key()
+cipher_suite = Fernet(key)
 
 
 def allowed_file(filename):
@@ -46,17 +56,32 @@ def predict():
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
 
-            # Process the input data (if needed)
-            # TODO: validate input data 
+            # TODO: validate input data
 
-            # Process the image using your model (replace this with your actual prediction code)
             if os.path.exists(file_path):
-                # Process the image using your model
                 prediction = model.predict(file_path)
             else:
                 return 'Error: File not found'
-            
-            return render_template('index.html', prediction=prediction)
+
+            with open(file_path, 'rb') as f:
+                plaintext = f.read()
+            encrypted_data = cipher_suite.encrypt(plaintext)
+
+
+            encrypted_file_path = os.path.join(app.config['ENCRYPTED_FOLDER'], 'encrypted_' + filename)
+            with open(encrypted_file_path, 'wb') as f:
+                f.write(encrypted_data)
+
+            os.remove(file_path)
+
+            # TODO add if login then allow image decryption
+
+            return render_template('predict.html', prediction=prediction)
+
+
+@app.route('/detect', methods=['GET'])
+def view_prediction_page():
+    return render_template('predict.html')
 
 
 @app.route('/render', methods=['GET'])

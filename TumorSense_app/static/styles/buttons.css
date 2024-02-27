@@ -1,0 +1,44 @@
+
+
+.cursor-default{
+    cursor: default;
+}
+
+.btn-gradient-blue{
+    background-image: linear-gradient(to right, #1D2B64 0%, #36b7ff  51%, #1D2B64  100%);
+    padding: 10px 25px;
+    text-align: center;
+    transition: 0.5s;
+    background-size: 200% auto;
+    color: white;
+    border-radius: var(--main-border-radius);
+    display: block;
+}
+
+.btn-gradient-blue:hover{
+    background-position: right center;
+    color: #fff;
+    box-shadow: 0 0 20px #4983dc;
+    text-decoration: none;
+}
+
+
+.btn-gradient-purple-blue {
+    background-image: linear-gradient(to right, #360033 0%, #0b8793  51%, #360033  100%);
+    padding: 10px 25px;
+    text-align: center;
+    transition: 0.5s;
+    background-size: 200% auto;
+    color: white;
+    border-radius: var(--main-border-radius);
+    display: block;
+}
+
+.btn-gradient-purple-blue:hover {
+    background-position: right center;
+    box-shadow: 0 0 20px #eee;
+    color: #fff;
+    text-decoration: none;
+}
+
+
