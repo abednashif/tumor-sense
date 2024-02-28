@@ -7,7 +7,7 @@
     /* Dark Mode - Light Mode */
     --base: #cfcfcf;
     --text: #212121;
-    --card-bg: #cfcfcf;
+    --card-bg: #404040;
 
     /* Analogous Color Palette*/
     --main-title-color: #2a84d3;
@@ -45,8 +45,8 @@
     :root {
         --base: #212121;
         --text: #cfcfcf;
-        --card-text: #212121;
-        --card-bg: #dddddd;
+        --card-text: #c5c5c5;
+        --card-bg: #333333;
     }
 }
 
@@ -54,16 +54,16 @@
     color-scheme: light;
     --base: #cfcfcf;
     --text: #212121;
-    --card-text: #cfcfcf;
-    --card-bg: #212121;
+    --card-text: #404040;
+    --card-bg: #b4babfe0;
 }
 
 :root:has(#theme [value="🌑"]:checked) {
     color-scheme: dark;
     --base: #212121;
     --text: #cfcfcf;
-    --card-text: #212121;
-    --card-bg: #dddddd;
+    --card-text: #c5c5c5;
+    --card-bg: #333333;
 }
 
 
