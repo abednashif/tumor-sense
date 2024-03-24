@@ -86,7 +86,7 @@ Total number of augmented training images: 11k.
 
 # Model Architecture
 <div>
-    <img src="MD_images/TumorSense_CNN.svg" alt="cnn network architecture"/>
+    <img src="MD_images/TumorSense_CNN.svg" height="100px" alt="cnn network architecture"/>
 </div>
 
 # Model Performance
