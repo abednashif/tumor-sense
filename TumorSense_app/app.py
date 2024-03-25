@@ -39,19 +39,20 @@ def index():
 
 @app.route('/predict', methods=['POST'])
 def predict():
+    # to test the prediction without doing all of the logic
+    # reportText = ("Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium,                   optio, eaque rerum! Provident similique accusantium nemo autem. Veritatis) obcaecati tenetur iure eius earum ut molestias architecto voluptate aliquam,                  nihil, eveniet aliquid culpa officia aut! Impedit sit sunt quaerat, odit, tenetur error, harum nesciunt ipsum debitis quas aliquid. Reprehenderit, quia.")
+    # return render_template('predict.html', prediction='Giloma', report_text=reportText)
+
     if request.method == 'POST':
-        # Check if the POST request has the file part
         if 'input_data' not in request.files:
             return 'No file part'
 
         file = request.files['input_data']
 
-        # If the user does not select a file, the browser submits an empty file without a filename
         if file.filename == '':
             return 'No selected file'
 
         if file and allowed_file(file.filename):
-            # Save the uploaded file to the uploads folder
             filename = secure_filename(file.filename)
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)

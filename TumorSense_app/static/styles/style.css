@@ -128,12 +128,12 @@ input{
 
 .dropdown-content {
     position: absolute;
-    top: 100%;
-    right: 0;
+    top: 80%;
+    right: 3rem;
     width: 25ch;
     height: 10ch;
     background-color: var(--base);
-    border: 1px solid var(--text);
+    border: 1px solid #5c5c5c;
     border-radius: var(--main-border-radius);
     padding: 10px;
     animation: scale-down var(--main-delay) cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
@@ -232,4 +232,8 @@ input{
   0% { border-image-slice: 1; }
   50% { border-image-slice: 20; }
   100% { border-image-slice: 1; }
+}
+
+.title{
+    font-size: 3ch;
 }
