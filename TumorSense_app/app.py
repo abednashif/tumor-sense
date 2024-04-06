@@ -1,12 +1,18 @@
 
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template, request, send_file, redirect, flash, url_for
 from TumorSenseV1 import TumorSense
 from werkzeug.utils import secure_filename
 from cryptography.fernet import Fernet
+# from flask_sqlalchemy import SQLAlchemy
+# from model_classes.user import User
 import os
 
 app = Flask(__name__)
 model = TumorSense()
+
+# TODO:
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://username:password@hostname/database_name'
+# db = SQLAlchemy(app)
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 
@@ -31,10 +37,32 @@ cipher_suite = Fernet(key)
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-
 @app.route('/')
 def index():
     return render_template('index.html')
+
+
+# @app.route('/register', methods=['GET', 'POST'])
+# def register():
+#     if request.method == 'POST':
+#         username = request.form['username']
+#         email = request.form['email']
+#         password = request.form['password']
+#
+#         existing_user = User.query.filter_by(username=username).first()
+#         if existing_user:
+#             flash('Username already exists. Please choose a different one.', 'error')
+#             return redirect(url_for('register'))
+#
+#         new_user = User(username=username, email=email, password=password)
+#         db.session.add(new_user)
+#         db.session.commit()
+#
+#         flash('You have been successfully registered. Please log in.', 'success')
+#         return redirect(url_for('login'))
+#
+#     return render_template('register.html')
+
 
 
 @app.route('/predict', methods=['POST'])
@@ -60,7 +88,7 @@ def predict():
             # TODO: validate input data
 
             if os.path.exists(file_path):
-                prediction = model.predict(file_path)
+                prediction, report_text = model.predict(file_path)
             else:
                 return 'Error: File not found'
 
@@ -77,7 +105,7 @@ def predict():
 
             # TODO add if login then allow image decryption
 
-            return render_template('predict.html', prediction=prediction)
+            return render_template('predict.html', prediction=prediction, report_text=report_text)
 
 
 @app.route('/detect', methods=['GET'])
@@ -96,6 +124,6 @@ if __name__ == '__main__':
 '''
     To run the app:
         1. Open a terminal
-        2. execute "python app.py"
+        2. execute "python app.py" 
         3. copy or press the link or paste "http://127.0.0.1:5700 or http://localhost:5700" in the browser
 '''
