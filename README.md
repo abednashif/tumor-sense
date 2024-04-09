@@ -6,8 +6,9 @@ A deep learning-based project that utilizes artificial intelligence for the dete
 - [Introduction](#Introduction)
 - [Dataset](#Dataset)
 - [Model Architecture](#model-architecture)
-- [Results](#results)
-- [Contributing](#contribution)
+- [Model Performance](#Model-Performance)
+- [Conclusion](#Conclusion)
+- [References](#References)
 
 
 
