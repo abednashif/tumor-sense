@@ -4,12 +4,14 @@ import numpy as np
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 from markupsafe import Markup
 
+
 class TumorSense:
     def __init__(self):
         current_directory = os.path.dirname(__file__)
-        model_path = os.path.join(current_directory, 'model.h5')
+        # model_path = os.path.join(current_directory, 'model.h5')
+        model_path = os.path.join(current_directory, 'fine_tuned_model.h5')
         self.model = tf.keras.models.load_model(model_path)
-        
+
     def predict(self, data):
         tumor_types = {
             'glioma': Markup(
@@ -22,17 +24,17 @@ class TumorSense:
                 'Adenoma://Definition: Adenomas are benign tumors that arise from glandular tissue. While they can occur in various organs, they are not typically found in the brain.//Importance in Brain Tumor Detection: In the context of brain imaging, adenoma is unlikely. It\'s more probable that normal was intended or there\'s a typo. It\'s crucial to confirm the actual result with the radiologist or physician.//')
         }
 
-        index = ['glioma','meningioma','normal','adenoma']
-        
-        data = load_img(data,target_size = (224,224))
+        index = ['glioma', 'meningioma', 'normal', 'adenoma']
+
+        data = load_img(data, target_size=(224, 224))
         data = img_to_array(data)
-        data = np.expand_dims(data,axis=0)
-        
+        data = np.expand_dims(data, axis=0)
+
         # result = self.model.predict(data)
-        
-        result = np.argmax(self.model.predict(data//255.0),axis=1)
+
+        result = np.argmax(self.model.predict(data // 255.0), axis=1)
         result = index[result[0]]
 
         report_text = tumor_types[result]
-        
+
         return result, report_text

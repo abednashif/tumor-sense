@@ -1,18 +1,15 @@
-
+import os
 from flask import Flask, render_template, request, send_file, redirect, flash, url_for
 from TumorSenseV1 import TumorSense
 from werkzeug.utils import secure_filename
 from cryptography.fernet import Fernet
-# from flask_sqlalchemy import SQLAlchemy
-# from model_classes.user import User
-import os
+from database.database import db, get_conn, fetch_all_patients, fetch_patient, Patient
 
 app = Flask(__name__)
+
+
 model = TumorSense()
 
-# TODO:
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://username:password@hostname/database_name'
-# db = SQLAlchemy(app)
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 
@@ -26,6 +23,10 @@ for folder in [UPLOAD_FOLDER, ENCRYPTED_FOLDER]:
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['ENCRYPTED_FOLDER'] = ENCRYPTED_FOLDER
+# app.config = get_conn()
+#
+# with app.app_context():
+#     db.create_all()
 
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
