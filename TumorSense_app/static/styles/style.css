@@ -110,7 +110,7 @@ input{
 }
 
 .report{
-    padding: 5rem;
+   padding: 2rem 3rem;
 }
 
 .login-label{
@@ -234,6 +234,52 @@ input{
   100% { border-image-slice: 1; }
 }
 
+@keyframes gradientAnimation {
+  0% {
+    background-image: linear-gradient(to right, #000046 0%, #1CB5E0  51%, #000046  100%);
+  }
+  50% {
+      background-image: linear-gradient(to left, #000046 0%, #1CB5E0  51%, #000046  100%);
+  }
+  100% {
+      background-image: linear-gradient(to right, #000046 0%, #1CB5E0  51%, #000046  100%);
+  }
+}
+
 .title{
+    width: 100%;
     font-size: 3ch;
+    background-image: linear-gradient(to right, #000046 0%, #1CB5E0  51%, #000046  100%);
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    text-align: center;
+    font-weight: bold;
+    margin: 10px;
+    animation: gradientAnimation 1s infinite;
+}
+
+
+.form-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    height: 40vh;
+}
+
+.form-group {
+    text-align: center;
+    margin: 0 auto;
+}
+
+.predict-btn{
+    margin: 0 auto;
+}
+
+.img-input-group{
+    margin-bottom: 2ch;
+}
+.img-input-group label{
+    margin-right: 3ch;
 }

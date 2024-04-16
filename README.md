@@ -47,7 +47,7 @@ Pituitary tumors are abnormal growths that develop in your pituitary gland. Some
 We collected a dataset of brain MRI images from openly available MRI datasets on Kaggle, HuggingFace,
 we used ~10k images, 82% of the dataset is used for training, whereas 18% of the dataset is used for testing. <br>
 Images are all scaled to 224 x 224, to improve the model's generalizability, data augmentation
-stratagies can be used to increase the diversity of the training sample when the dataset volume is small.
+strategies can be used to increase the diversity of the training sample when the dataset volume is small.
 
 - Data collection 
 <table style="margin-left: 2rem">
@@ -57,8 +57,8 @@ stratagies can be used to increase the diversity of the training sample when the
     <th>Testing Total</th>
 </thead>
 <tbody>
-    <tr><td>Giloma</td><td>1800</td><td>430</td></tr>
-    <tr><td>Pituary</td><td>2320</td><td>410</td></tr>
+    <tr><td>Glioma</td><td>1800</td><td>430</td></tr>
+    <tr><td>Pituitary</td><td>2320</td><td>410</td></tr>
     <tr><td>Meningioma</td><td>2200</td><td>450</td></tr>
     <tr><td>Normal</td><td>2020</td><td>530</td></tr>
 </tbody>
@@ -109,7 +109,8 @@ Total number of augmented training images: 11k.
             <tr><td>Our first model (5m params)</td><td>85.7</td></tr>
             <tr><td>VGG16</td><td>87.2</td></tr>
             <tr><td>ResNet50</td><td>90.9</td></tr>
-            <tr><td>The proposed model</td><td>93</td></tr>
+            <tr><td>Second Model (11.5m params)</td><td>93</td></tr>
+            <tr><td>The proposed model</td><td>98</td></tr>
         </tbody>
     </table>
 </div>

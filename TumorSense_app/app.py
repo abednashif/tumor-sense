@@ -1,14 +1,16 @@
 import os
 from flask import Flask, render_template, request, send_file, redirect, flash, url_for
-from TumorSenseV1 import TumorSense
+from TumorSenseV1 import BrainTumor, LungTumor
 from werkzeug.utils import secure_filename
 from cryptography.fernet import Fernet
-from database.database import db, get_conn, fetch_all_patients, fetch_patient, Patient
+from ast import dump
+# from database.database import db, get_conn, fetch_all_patients, fetch_patient, Patient
 
 app = Flask(__name__)
 
 
-model = TumorSense()
+brain_model = BrainTumor()
+lung_model = LungTumor()
 
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
@@ -65,12 +67,13 @@ def index():
 #     return render_template('register.html')
 
 
+@app.route('/predict/<string:model_type>', methods=['POST'])
+def predict(model_type):
+    type = model_type.lower()
 
-@app.route('/predict', methods=['POST'])
-def predict():
     # to test the prediction without doing all of the logic
     # reportText = ("Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium,                   optio, eaque rerum! Provident similique accusantium nemo autem. Veritatis) obcaecati tenetur iure eius earum ut molestias architecto voluptate aliquam,                  nihil, eveniet aliquid culpa officia aut! Impedit sit sunt quaerat, odit, tenetur error, harum nesciunt ipsum debitis quas aliquid. Reprehenderit, quia.")
-    # return render_template('predict.html', prediction='Giloma', report_text=reportText)
+    # return render_template('brain_predict.html', prediction='Giloma', report_text=reportText)
 
     if request.method == 'POST':
         if 'input_data' not in request.files:
@@ -86,12 +89,26 @@ def predict():
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
 
-            # TODO: validate input data
+            # TODO: validate input data MRI detection model if model_type = brain
 
-            if os.path.exists(file_path):
-                prediction, report_text = model.predict(file_path)
-            else:
-                return 'Error: File not found'
+            try:
+                match type:
+                    case 'lung':
+                        prediction, report_text = lung_model.predict(file_path)
+                    case 'brain':
+                        prediction, report_text = brain_model.predict(file_path)
+                    case _:
+                        return "Model does not exist!"
+            except Exception.args as e:
+                return "Model does not exist!"
+            finally:
+                print("finished")
+
+
+            # if os.path.exists(file_path):
+            #     prediction, report_text = model.predict(file_path)
+            # else:
+            #     return 'Error: File not found'
 
             with open(file_path, 'rb') as f:
                 plaintext = f.read()
@@ -106,13 +123,23 @@ def predict():
 
             # TODO add if login then allow image decryption
 
-            return render_template('predict.html', prediction=prediction, report_text=report_text)
+            if type == 'lung':
+                return render_template('lung_predict.html', prediction=prediction, report_text=report_text)
+            elif type == 'brain':
+                return render_template('brain_predict.html', prediction=prediction, report_text=report_text)
 
 
-@app.route('/detect', methods=['GET'])
-def view_prediction_page():
-    return render_template('predict.html')
+@app.route('/detect/<string:model_type>', methods=['GET'])
+def view_prediction_page(model_type):
+    type = model_type.lower()
 
+    match type:
+        case 'lung':
+            return render_template('lung_predict.html')
+        case 'brain':
+            return render_template('brain_predict.html')
+        case _:
+            return render_template('index.html')
 
 @app.route('/render', methods=['GET'])
 def view_model():

@@ -22,14 +22,14 @@
 
 from flask import Flask, request
 from flask_restful import Api, Resource
-from TumorSenseV1 import TumorSense
+from TumorSenseV1 import BrainTumor
 from werkzeug.utils import secure_filename
 from cryptography.fernet import Fernet
 import os
 
 app = Flask(__name__)
 api = Api(app)
-model = TumorSense()
+model = BrainTumor()
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 
