@@ -16,6 +16,11 @@
                             <div class="p-2 text-center title">
                                 Brain Tumor Detection
                             </div>
+
+                            <div class="d-flex">
+                                {% include 'radar_chart.html' %}
+                            </div>
+
                             <div class="form-group">
                                 <form method="POST" action="/predict/brain" enctype="multipart/form-data">
                                     <div class="d-flex flex-row img-input-group align-items-center">

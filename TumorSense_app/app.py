@@ -1,10 +1,12 @@
 import os
-from flask import Flask, render_template, request, send_file, redirect, flash, url_for
+import random
+
+from flask import Flask, render_template, request, send_file, redirect, flash, url_for, json
 from TumorSenseV1 import BrainTumor, LungTumor
 from werkzeug.utils import secure_filename
 from cryptography.fernet import Fernet
 from ast import dump
-# from database.database import db, get_conn, fetch_all_patients, fetch_patient, Patient
+from database.database import get_all_data, execute_query
 
 app = Flask(__name__)
 
@@ -133,11 +135,25 @@ def predict(model_type):
 def view_prediction_page(model_type):
     type = model_type.lower()
 
+    lung_detection_counter = {
+        'Adenocarcinoma': random.randint(1, 50),
+        'Large cell carcinoma': random.randint(1, 50),
+        'Normal': random.randint(1, 50),
+        'Squamous cell carcinom': random.randint(1, 50),
+    }
+
+    brain_detection_counter = {
+        'Glioma': random.randint(1, 50),
+        'Meningioma': random.randint(1, 50),
+        'Normal': random.randint(1, 50),
+        'Adenoma': random.randint(1, 50)
+    }
+
     match type:
         case 'lung':
-            return render_template('lung_predict.html')
+            return render_template('lung_predict.html', detection_counter=json.dumps(lung_detection_counter))
         case 'brain':
-            return render_template('brain_predict.html')
+            return render_template('brain_predict.html', detection_counter=json.dumps(brain_detection_counter))
         case _:
             return render_template('index.html')
 
