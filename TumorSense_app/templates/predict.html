@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{{ title }} Tumor Detection</title>
+    {% include "mainHeader/mainHeader.html" %}
+
+    {#  CSS  #}
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static', filename='styles/bootstrap/bootstrap-icons.min.css') }}"/>
+
+    {# Scripts #}
+    <script src="{{ url_for('static', filename='lib/TypeWriter.js') }}" defer></script>
+</head>
+<body>
+<div class="container-fluid pt-3">
+    <div class="row">
+        {#                    {% if not true %}#}
+        {% if not prediction %}
+            <div class="form-container">
+                <div class="p-2 text-center title">
+                    {{ title }} Tumor Detection
+                </div>
+
+                <div class="d-flex">
+                    {% include 'charts/tumors_chart.html' %}
+
+                    <div class="form-container">
+                        <form method="POST" class="form-upload" action="/predict/{{ type }}"
+                              enctype="multipart/form-data">
+                            <label for="input_data" class="upload-label" title="Upload an image">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
+                                     class="bi bi-upload" viewBox="0 0 16 16">
+                                    <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"></path>
+                                    <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z"></path>
+                                </svg>
+                            </label>
+                            <input type="file" name="input_data" id="input_data" class="upload-file" accept="image/*"
+                                   required/>
+                            <input class="btn-gradient-purple-blue predict-btn" type="submit" value="Predict"/>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        {% endif %}
+
+        <div>
+            <div class="report-container">
+                {% if prediction %}
+                    <div class="p-2 text-center title">
+                        {{ title }} Tumor Detection
+                    </div>
+                    <h4 class="p-3"> {{ prediction }} </h4>
+                    <div class="report" id="predict_report_text"></div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</div>
+<script defer>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        let report_text = "{{ report_text }}"
+        console.log("Report Text: \n\n" + report_text)
+
+        let isReportElementRendered = $('#predict_report_text').length !== 0
+        if (!isReportElementRendered) {
+            return
+        }
+
+        TypeWriter(report_text, 'predict_report_text', 15)
+
+        if ({{ showPopup }}) {
+            let CTorMRI = {{ title }} === 'Brain' ? "MRI" : "CT"
+            Swal.fire({
+                title: "{{ title }} Tumor Detection",
+                text: `Please upload a valid ${CTorMRI} image.`,
+                icon: "error"
+            });
+        }
+
+    });
+
+</script>
+</body>
+</html>

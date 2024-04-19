@@ -38,6 +38,19 @@ if not os.path.exists(UPLOAD_FOLDER):
 key = Fernet.generate_key()
 cipher_suite = Fernet(key)
 
+lung_detection_counter = {
+    'Adenocarcinoma': random.randint(1, 50),
+    'Large cell carcinoma': random.randint(1, 50),
+    'Normal': random.randint(1, 50),
+    'Squamous cell carcinom': random.randint(1, 50),
+}
+
+brain_detection_counter = {
+    'Glioma': random.randint(1, 50),
+    'Meningioma': random.randint(1, 50),
+    'Normal': random.randint(1, 50),
+    'Adenoma': random.randint(1, 50)
+}
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -73,10 +86,6 @@ def index():
 def predict(model_type):
     type = model_type.lower()
 
-    # to test the prediction without doing all of the logic
-    # reportText = ("Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium,                   optio, eaque rerum! Provident similique accusantium nemo autem. Veritatis) obcaecati tenetur iure eius earum ut molestias architecto voluptate aliquam,                  nihil, eveniet aliquid culpa officia aut! Impedit sit sunt quaerat, odit, tenetur error, harum nesciunt ipsum debitis quas aliquid. Reprehenderit, quia.")
-    # return render_template('brain_predict.html', prediction='Giloma', report_text=reportText)
-
     if request.method == 'POST':
         if 'input_data' not in request.files:
             return 'No file part'
@@ -91,14 +100,26 @@ def predict(model_type):
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
 
-            # TODO: validate input data MRI detection model if model_type = brain
-
             try:
                 match type:
                     case 'lung':
-                        prediction, report_text = lung_model.predict(file_path)
+                        # imageType = lung_model.checkIfCT(file_path)
+                        # if imageType == lung_model._CT:
+                            prediction, report_text = lung_model.predict(file_path)
+                        #  else:
+                        #      os.remove(file_path)
+                        #      return render_template('predict.html',
+                        #              detection_counter=json.dumps(lung_detection_counter),
+                        #              type='lung', title="Lung")
                     case 'brain':
-                        prediction, report_text = brain_model.predict(file_path)
+                        # imageType = brain_model.checkIfMRI(file_path)
+                        # if imageType == brain_model._MRI:
+                            prediction, report_text = brain_model.predict(file_path)
+                        # else:
+                        #     os.remove(file_path)
+                        #     return render_template('predict.html',
+                        #                            detection_counter=json.dumps(brain_detection_counter),
+                        #                            type='brain', title="Brain", showPopup='true')
                     case _:
                         return "Model does not exist!"
             except Exception.args as e:
@@ -106,11 +127,6 @@ def predict(model_type):
             finally:
                 print("finished")
 
-
-            # if os.path.exists(file_path):
-            #     prediction, report_text = model.predict(file_path)
-            # else:
-            #     return 'Error: File not found'
 
             with open(file_path, 'rb') as f:
                 plaintext = f.read()
@@ -123,37 +139,26 @@ def predict(model_type):
 
             os.remove(file_path)
 
-            # TODO add if login then allow image decryption
-
             if type == 'lung':
-                return render_template('lung_predict.html', prediction=prediction, report_text=report_text)
+                return render_template('predict.html', prediction=prediction,
+                                       report_text=report_text, type='lung', title="Lung", showPopup='false')
             elif type == 'brain':
-                return render_template('brain_predict.html', prediction=prediction, report_text=report_text)
+                return render_template('predict.html', prediction=prediction,
+                                       report_text=report_text, type='brain', title="Brain", showPopup='false')
 
 
 @app.route('/detect/<string:model_type>', methods=['GET'])
 def view_prediction_page(model_type):
     type = model_type.lower()
 
-    lung_detection_counter = {
-        'Adenocarcinoma': random.randint(1, 50),
-        'Large cell carcinoma': random.randint(1, 50),
-        'Normal': random.randint(1, 50),
-        'Squamous cell carcinom': random.randint(1, 50),
-    }
-
-    brain_detection_counter = {
-        'Glioma': random.randint(1, 50),
-        'Meningioma': random.randint(1, 50),
-        'Normal': random.randint(1, 50),
-        'Adenoma': random.randint(1, 50)
-    }
-
     match type:
         case 'lung':
-            return render_template('lung_predict.html', detection_counter=json.dumps(lung_detection_counter))
+            return render_template('predict.html', detection_counter=json.dumps(lung_detection_counter),
+                                   type='lung', title="Lung", showPopup='false')
         case 'brain':
-            return render_template('brain_predict.html', detection_counter=json.dumps(brain_detection_counter))
+            return render_template('predict.html', detection_counter=json.dumps(brain_detection_counter),
+                                   type='brain', title="Brain", showPopup='false')
+
         case _:
             return render_template('index.html')
 
@@ -164,10 +169,3 @@ def view_model():
 
 if __name__ == '__main__':
     app.run(debug=True, port=5700)
-
-'''
-    To run the app:
-        1. Open a terminal
-        2. execute "python app.py" 
-        3. copy or press the link or paste "http://127.0.0.1:5700 or http://localhost:5700" in the browser
-'''

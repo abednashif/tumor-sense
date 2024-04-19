@@ -5,7 +5,7 @@
 }
 
 .btn-gradient-blue{
-    background-image: linear-gradient(to right, #1D2B64 0%, #36b7ff  51%, #1D2B64  100%);
+    background-image: linear-gradient(to right, #2a3772 0%, #26a8ed 51%, #2a3772 100%);
     padding: 10px 25px;
     text-align: center;
     transition: 0.5s;
@@ -13,6 +13,7 @@
     color: white;
     border-radius: var(--main-border-radius);
     display: block;
+    letter-spacing: 1px;
 }
 
 .btn-gradient-blue:hover{
@@ -32,6 +33,7 @@
     color: white;
     border-radius: var(--main-border-radius);
     display: block;
+    border: 0;
 }
 
 .btn-gradient-purple-blue:hover {

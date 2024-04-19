@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>radar chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='lib/jquery/jquery-3.7.1.min.js') }}"></script>
+</head>
+<body>
+<canvas id="statistics_pie_chart" width="400" height="400"></canvas>
+
+<script>
+    {# Pie chart JS #}
+    console.log("JSON data");
+    console.log({{ detection_counter | safe }});
+
+    const chart_data = {{ detection_counter | safe }}
+    if (chart_data !== '') {
+        const theme = $('.themeSelector').val();
+        const chart_grid_color = theme === '🌑' ? 'white' : 'grey';
+
+        const labels = Object.keys(chart_data);
+        const data = {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Has been detected: ',
+                    data: Object.values(chart_data),
+                    borderColor: '#87a5eb',
+                    backgroundColor: ['#6096B4', '#93BFCF', '#BDCDD6', '#898121'],
+                }
+            ],
+        };
+
+        const config = {
+            type: 'pie',
+            data: data,
+            options: {
+                responsive: true,
+                layout: {
+                    padding: {
+                        bottom: 15,
+                    },
+                },
+                borderWidth: 2,
+                hoverOffset: 25,
+                plugins: {
+                    title: {
+                        display: false,
+                        text: 'Tumor Detection Statistic',
+                    },
+                },
+                cutout: '0%'
+            }
+        };
+
+        const themeSelector = document.querySelector('#theme');
+        const ctx = document.getElementById('statistics_pie_chart').getContext('2d');
+        const pieChart = new Chart(ctx, config);
+    }
+</script>
+</body>
+</html>

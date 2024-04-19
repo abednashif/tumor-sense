@@ -16,6 +16,8 @@
     --main-accent-color: #34B2AE;
     --main-report-text-color: #8ea5cd;
 
+    --upload-icon-hover: #52a2e9;
+
     --header-bar-color: #275985;
     --header-bar-border: 2px solid var(--header-bar-color);
 
@@ -76,6 +78,9 @@ body{
     color-scheme: dark light;
     color: var(--text) !important;
     background-color: var(--base) !important;
+    ::selection{
+        color: var(--gray-400) !important;
+    }
     /*background-color: var(--bs-dark) !important;*/
 }
 
@@ -282,4 +287,24 @@ input{
 }
 .img-input-group label{
     margin-right: 3ch;
+}
+
+.upload-label {
+    display: inline-block;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.upload-file {
+    display: none;
+}
+
+.upload-label svg:hover {
+    color: var( --upload-icon-hover);
+    transition: color var(--main-delay);
+}
+.form-upload{
+    display: flex;
+    align-items: center;
+    position: relative;
 }

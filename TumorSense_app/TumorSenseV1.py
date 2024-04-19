@@ -8,12 +8,18 @@ from markupsafe import Markup
 
 
 class BrainTumor:
+    _MRI = 'MRI'
+
     def __init__(self):
         current_directory = os.path.dirname(__file__)
         # model_path = os.path.join(current_directory, 'model.h5')
         model_path = os.path.join(current_directory, 'models/fine_tuned_model.h5')
+        mriDetect_path = os.path.join(current_directory, 'models/mri-img-detection.h5')
         self.model = load_model(model_path)
         self.model.compile(optimizer=Adam(), loss='categorical_crossentropy', metrics=['accuracy'])
+
+        self.detect_mri = load_model(mriDetect_path)
+        self.detect_mri.compile(optimizer=Adam(), loss='binary_crossentropy', metrics=['accuracy'])
 
     def predict(self, data):
         tumor_types = {
@@ -33,6 +39,7 @@ class BrainTumor:
 
         img_arr = img_to_array(image)
         _data = np.expand_dims(img_arr, axis=0)
+
         result = np.argmax(self.model.predict(_data / 255.0), axis=1)
 
         result = index[result[0]]
@@ -42,12 +49,30 @@ class BrainTumor:
         return result, report_text
 
 
+    def checkIfMRI(self, _image_path):
+        images_labels = ["Not a MRI image!", "MRI"]
+        threshold = 0.5
+
+        _image = load_img(_image_path, target_size=(224, 224))
+        image = img_to_array(_image)
+        image = np.expand_dims(image, axis=0)
+        res = self.detect_mri.predict(image)
+
+        return images_labels[0] if res >= threshold else images_labels[1]
+
+
 class LungTumor:
+    _CT = 'CT'
     def __init__(self):
         current_directory = os.path.dirname(__file__)
         model_path = os.path.join(current_directory, 'models/LungTumorModel.hdf5')
+        # CTDetect_path = os.path.join(current_directory, 'models/ct-img-detection.h5')
+
         self.model = load_model(model_path)
         self.model.compile(optimizer='Adam', loss='categorical_crossentropy')
+
+        # self.detect_CT = load_model(CTDetect_path)
+        # self.detect_CT.compile(optimizer=Adam(), loss='binary_crossentropy', metrics=['accuracy'])
 
     def predict(self, data):
 
@@ -83,3 +108,15 @@ class LungTumor:
         report_text = tumor_types[result]
 
         return result, report_text
+
+
+    def checkIfCT(self, _image):
+        images_labels = ["Not a CT image!", "CT"]
+        threshold = 0.5
+
+        image = img_to_array(_image)
+
+        image = np.expand_dims(image, axis=0)
+        res = self.detect_ct.predict(image)
+
+        return images_labels[0] if res >= threshold else class_labels[1]
