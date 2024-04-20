@@ -10,10 +10,8 @@ from database.database import get_all_data, execute_query
 
 app = Flask(__name__)
 
-
 brain_model = BrainTumor()
 lung_model = LungTumor()
-
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 
@@ -52,12 +50,14 @@ brain_detection_counter = {
     'Adenoma': random.randint(1, 50)
 }
 
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('/index.html')
 
 
 # @app.route('/register', methods=['GET', 'POST'])
@@ -105,21 +105,21 @@ def predict(model_type):
                     case 'lung':
                         # imageType = lung_model.checkIfCT(file_path)
                         # if imageType == lung_model._CT:
-                            prediction, report_text = lung_model.predict(file_path)
-                        #  else:
-                        #      os.remove(file_path)
-                        #      return render_template('predict.html',
-                        #              detection_counter=json.dumps(lung_detection_counter),
-                        #              type='lung', title="Lung")
+                        prediction, report_text = lung_model.predict(file_path)
+                    #  else:
+                    #      os.remove(file_path)
+                    #      return render_template('predict.html',
+                    #              detection_counter=json.dumps(lung_detection_counter),
+                    #              type='lung', title="Lung")
                     case 'brain':
                         # imageType = brain_model.checkIfMRI(file_path)
                         # if imageType == brain_model._MRI:
-                            prediction, report_text = brain_model.predict(file_path)
-                        # else:
-                        #     os.remove(file_path)
-                        #     return render_template('predict.html',
-                        #                            detection_counter=json.dumps(brain_detection_counter),
-                        #                            type='brain', title="Brain", showPopup='true')
+                        prediction, report_text = brain_model.predict(file_path)
+                    # else:
+                    #     os.remove(file_path)
+                    #     return render_template('predict.html',
+                    #                            detection_counter=json.dumps(brain_detection_counter),
+                    #                            type='brain', title="Brain", showPopup='true')
                     case _:
                         return "Model does not exist!"
             except Exception.args as e:
@@ -127,11 +127,9 @@ def predict(model_type):
             finally:
                 print("finished")
 
-
             with open(file_path, 'rb') as f:
                 plaintext = f.read()
             encrypted_data = cipher_suite.encrypt(plaintext)
-
 
             encrypted_file_path = os.path.join(app.config['ENCRYPTED_FOLDER'], 'encrypted_' + filename)
             with open(encrypted_file_path, 'wb') as f:
@@ -162,6 +160,7 @@ def view_prediction_page(model_type):
         case _:
             return render_template('index.html')
 
+
 @app.route('/render', methods=['GET'])
 def view_model():
     return render_template('render.html')
@@ -169,3 +168,4 @@ def view_model():
 
 if __name__ == '__main__':
     app.run(debug=True, port=5700)
+    # app.run()

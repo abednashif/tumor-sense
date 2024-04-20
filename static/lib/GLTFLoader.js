@@ -6,7 +6,7 @@
  * @author Don McCurdy / https://www.donmccurdy.com
  */
 
-var THREE = require( 'three' );
+var THREE = require( './three' );
 
 
 var GLTFLoader = ( function () {

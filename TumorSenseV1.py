@@ -14,12 +14,12 @@ class BrainTumor:
         current_directory = os.path.dirname(__file__)
         # model_path = os.path.join(current_directory, 'model.h5')
         model_path = os.path.join(current_directory, 'models/fine_tuned_model.h5')
-        mriDetect_path = os.path.join(current_directory, 'models/mri-img-detection.h5')
+        # mriDetect_path = os.path.join(current_directory, 'models/mri-img-detection.h5')
         self.model = load_model(model_path)
         self.model.compile(optimizer=Adam(), loss='categorical_crossentropy', metrics=['accuracy'])
 
-        self.detect_mri = load_model(mriDetect_path)
-        self.detect_mri.compile(optimizer=Adam(), loss='binary_crossentropy', metrics=['accuracy'])
+#         self.detect_mri = load_model(mriDetect_path)
+#         self.detect_mri.compile(optimizer=Adam(), loss='binary_crossentropy', metrics=['accuracy'])
 
     def predict(self, data):
         tumor_types = {
@@ -65,7 +65,7 @@ class LungTumor:
     _CT = 'CT'
     def __init__(self):
         current_directory = os.path.dirname(__file__)
-        model_path = os.path.join(current_directory, 'models/LungTumorModel.hdf5')
+        model_path = os.path.join(current_directory, 'models/LungTumorModel.h5')
         # CTDetect_path = os.path.join(current_directory, 'models/ct-img-detection.h5')
 
         self.model = load_model(model_path)
