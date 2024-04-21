@@ -1,4 +1,4 @@
-:root{
+:root {
     --main-height: 100dvh;
 
     --main-background-color-light: #cfcfcf;
@@ -70,7 +70,7 @@
 
 
 html,
-body{
+body {
     font-family: "Overpass", sans-serif !important;
     font-optical-sizing: auto;
     font-style: normal;
@@ -78,20 +78,22 @@ body{
     color-scheme: dark light;
     color: var(--text) !important;
     background-color: var(--base) !important;
-    ::selection{
+
+    ::selection {
         color: var(--gray-400) !important;
     }
+
     /*background-color: var(--bs-dark) !important;*/
 }
 
-.header-bar{
+.header-bar {
     border-bottom: var(--header-bar-border);
     position: sticky;
     top: 0;
     /*background: var(--bs-dark);*/
 }
 
-.header-bar a{
+.header-bar a {
     color: var(--main-title-color) !important;
     text-decoration: none;
     font-size: 40px;
@@ -102,23 +104,23 @@ body{
     -ms-user-select: none;
 }
 
-label{
-  color: var(--text);
+label {
+    color: var(--text);
 }
 
-input{
-  color: var(--text);
+input {
+    color: var(--text);
 }
 
-.container-fluid{
+.container-fluid {
     color: var(--main-report-text-color);
 }
 
-.report{
-   padding: 2rem 3rem;
+.report {
+    padding: 2rem 3rem;
 }
 
-.login-label{
+.login-label {
     color: var(--main-title-color);
     user-select: none;
     -ms-user-select: none;
@@ -126,7 +128,7 @@ input{
     -webkit-user-select: none;
 }
 
-.login-label:hover{
+.login-label:hover {
     cursor: pointer;
 }
 
@@ -136,7 +138,7 @@ input{
     top: 80%;
     right: 3rem;
     width: 25ch;
-    height: 10ch;
+    height: 13ch;
     background-color: var(--base);
     border: 1px solid #5c5c5c;
     border-radius: var(--main-border-radius);
@@ -146,9 +148,15 @@ input{
     display: none;
 }
 
+.reservations-icon {
+    font-size: 30px !important;
+    margin-right: 2ch;
+    position: relative;
+}
+
 .user-image {
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     margin-right: 10px;
     cursor: pointer;
@@ -172,89 +180,95 @@ input{
 
 
 @keyframes scale-down {
-  from {
-    transform: scale(0);
-  }
-  to {
-    transform: scale(1);
-  }
+    from {
+        transform: scale(0);
+    }
+    to {
+        transform: scale(1);
+    }
 }
 
-.hidden-input{
+.hidden-input {
     display: none;
 }
 
 /***** Brain SVG *****/
-.brain-animation{
-  height: 10%;
-  width: 10%;
+.brain-animation {
+    height: 10%;
+    width: 10%;
 }
 
 @keyframes beat {
     0% {
-      animation-timing-function: cubic-bezier(
-        0.1028,
-        0.2484,
-        0.1372,
-        0.849
-      );
-      transform: scale(1);
+        animation-timing-function: cubic-bezier(
+                0.1028,
+                0.2484,
+                0.1372,
+                0.849
+        );
+        transform: scale(1);
     }
 
     34% {
-      animation-timing-function: cubic-bezier(
-        0.7116,
-        0.2095,
-        0.8159,
-        0.6876
-      );
-      transform: scale(1.2);
+        animation-timing-function: cubic-bezier(
+                0.7116,
+                0.2095,
+                0.8159,
+                0.6876
+        );
+        transform: scale(1.2);
     }
 
     68% {
-      animation-timing-function: cubic-bezier(0.1475, 0.2888, 0.294, 0.883);
-      transform: scale(1.0268);
+        animation-timing-function: cubic-bezier(0.1475, 0.2888, 0.294, 0.883);
+        transform: scale(1.0268);
     }
 
     84% {
-      animation-timing-function: cubic-bezier(
-        0.8176,
-        0.2193,
-        0.867,
-        0.6889
-      );
-      transform: scale(1.0932);
+        animation-timing-function: cubic-bezier(
+                0.8176,
+                0.2193,
+                0.867,
+                0.6889
+        );
+        transform: scale(1.0932);
     }
 
     100% {
-      transform: scale(1);
+        transform: scale(1);
     }
 }
 
 
 /***** background gradient *****/
 @keyframes borderAnimation {
-  0% { border-image-slice: 1; }
-  50% { border-image-slice: 20; }
-  100% { border-image-slice: 1; }
+    0% {
+        border-image-slice: 1;
+    }
+    50% {
+        border-image-slice: 20;
+    }
+    100% {
+        border-image-slice: 1;
+    }
 }
 
 @keyframes gradientAnimation {
-  0% {
-    background-image: linear-gradient(to right, #000046 0%, #1CB5E0  51%, #000046  100%);
-  }
-  50% {
-      background-image: linear-gradient(to left, #000046 0%, #1CB5E0  51%, #000046  100%);
-  }
-  100% {
-      background-image: linear-gradient(to right, #000046 0%, #1CB5E0  51%, #000046  100%);
-  }
+    0% {
+        background-image: linear-gradient(to right, #000046 0%, #1CB5E0 51%, #000046 100%);
+    }
+    50% {
+        background-image: linear-gradient(to left, #000046 0%, #1CB5E0 51%, #000046 100%);
+    }
+    100% {
+        background-image: linear-gradient(to right, #000046 0%, #1CB5E0 51%, #000046 100%);
+    }
 }
 
-.title{
+.title {
     width: 100%;
     font-size: 3ch;
-    background-image: linear-gradient(to right, #000046 0%, #1CB5E0  51%, #000046  100%);
+    background-image: linear-gradient(to right, #000046 0%, #1CB5E0 51%, #000046 100%);
     color: transparent;
     -webkit-background-clip: text;
     background-clip: text;
@@ -278,14 +292,15 @@ input{
     margin: 3rem auto;
 }
 
-.predict-btn{
+.predict-btn {
     margin: 0 auto;
 }
 
-.img-input-group{
+.img-input-group {
     margin-bottom: 2ch;
 }
-.img-input-group label{
+
+.img-input-group label {
     margin-right: 3ch;
 }
 
@@ -300,11 +315,57 @@ input{
 }
 
 .upload-label svg:hover {
-    color: var( --upload-icon-hover);
+    color: var(--upload-icon-hover);
     transition: color var(--main-delay);
 }
-.form-upload{
+
+.form-upload {
     display: flex;
     align-items: center;
     position: relative;
+}
+
+.container-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.welcome-container {
+    max-width: 100%;
+}
+
+text[font-family="applied-button-font-0"] {
+    background-color: var(--base) !important;
+}
+
+.other-signin {
+    align-items: end;
+    justify-content: start;
+}
+
+
+.signin-button,
+.abcRioButton {
+    height: 50px !important;
+    width: 50px !important;
+    border-radius: 20% !important;
+    cursor: pointer;
+    margin-right: 2ch;
+}
+
+.signin-button {
+    scale: 1.2;
+    border-radius: 60% !important;
+}
+
+.abcRioButton {
+    scale: 0.8;
+}
+
+.badge.rounded-pill {
+    scale: 0.5;
+    top: -8px;
+    left: 20px;
 }
