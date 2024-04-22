@@ -7,13 +7,11 @@ from werkzeug.utils import secure_filename
 from cryptography.fernet import Fernet
 from ast import dump
 from database.database import get_all_data, execute_query, User
-from flask_bcrypt import Bcrypt
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
 
-bcrypt = Bcrypt(app)
 
 is_authenticated = False
 _user = None
