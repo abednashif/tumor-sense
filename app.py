@@ -16,14 +16,14 @@ app.config['SECRET_KEY'] = os.urandom(24)
 bcrypt = Bcrypt(app)
 
 is_authenticated = False
+_user = None
 
-# TODO: add more entries in patients table for lung tumor then populate this object
-# TODO: use a special query to group each type and count them then assign values to the object
+
 lung_detection_counter = {
     'Adenocarcinoma': 0,
     'Large cell carcinoma': 0,
     'Normal': 0,
-    'Squamous cell carcinom': 0,
+    'Squamous cell carcinoma': 0,
 }
 
 brain_detection_counter = {
@@ -56,6 +56,34 @@ key = Fernet.generate_key()
 cipher_suite = Fernet(key)
 
 
+def load_tumorTypesCounts(doctor_id):
+    global lung_detection_counter, brain_detection_counter
+
+    # reset counts
+    lung_detection_counter = {
+        'Adenocarcinoma': 0,
+        'Large cell carcinoma': 0,
+        'Normal': 0,
+        'Squamous cell carcinoma': 0,
+    }
+
+    brain_detection_counter = {
+        'Glioma': 0,
+        'Meningioma': 0,
+        'Normal': 0,
+        'Adenoma': 0
+    }
+
+    res = User.get_tumor_types_by_doctor_id(doctor_id)
+
+    for tumor_type, lung_count, brain_count in res:
+        if tumor_type == 'Normal_l' or tumor_type == 'Normal_b':
+            tumor_type = 'Normal'
+        if lung_count > 0:
+            lung_detection_counter[tumor_type] += lung_count
+        if brain_count > 0:
+            brain_detection_counter[tumor_type] += brain_count
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -66,13 +94,14 @@ def load_user(user_id):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        global is_authenticated
+        global is_authenticated, _user
         data = request.get_json()
         username = data.get('username')
         password = data.get('password')
         user = User.get_doctor_user_by_username(username)
         if user and user['password'] == password:
             is_authenticated = True
+            _user = user
             displayname = user['firstname'] + " " + user['lastname']
             session['displayname'] = displayname
             return render_template('dashboard.html', displayname=displayname, is_authenticated=True)
@@ -174,10 +203,12 @@ def predict(model_type):
 @app.route('/detect/<string:model_type>', methods=['GET'])
 def view_prediction_page(model_type):
     type = model_type.lower()
-    global is_authenticated
+    global is_authenticated, _user
 
     if not is_authenticated:
         return redirect(url_for('index'))
+
+    load_tumorTypesCounts(_user['id'])
 
     match type:
         case 'lung':

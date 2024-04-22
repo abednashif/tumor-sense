@@ -19,20 +19,22 @@ connection_uri = sa.engine.url.URL(
 engine = sa.create_engine(connection_uri)
 
 
-def execute_query(query, **params):
+def execute_query(query, params=None):
     """
     Execute any SQL query safely with parameterized inputs.
 
     Args:
         query (str): The SQL query to execute.
-        **params: Optional keyword arguments for parameter values.
+        params (dict): Optional dictionary of parameter values.
 
     Returns:
         list: A list containing the fetched data.
     """
     with engine.connect() as con:
+        if params is None:
+            params = {}
         sql = text(query)
-        res = con.execute(sql, **params)
+        res = con.execute(sql, params)
         return [row for row in res]
 
 def execute_query_single(query, **params):
@@ -100,6 +102,8 @@ class User:
         Returns:
             obj: The doctor user object.
         """
+        if doctor_id is None:
+            return None
         return execute_query_single(f"SELECT * FROM DoctorsUsers du INNER JOIN Doctors AS doc ON doc.id = '{doctor_id}'"
                                     f" WHERE du.DoctorID = '{doctor_id}'")
 
@@ -111,6 +115,8 @@ class User:
         Returns:
             obj: The doctor user object.
         """
+        if username is None:
+            return None
         return execute_query_single(f"SELECT * FROM DoctorsUsers du INNER JOIN Doctors AS doc ON "
                                     f" du.DoctorID = doc.id WHERE du.Username = '{username}'")
 
@@ -121,7 +127,33 @@ class User:
         Returns:
             list: A list of patient objects.
         """
+        if doctor_id is None:
+            return None
         return execute_query(f"SELECT * FROM Patients INNER JOIN DoctorsPatients "
                                  f"ON Patients.id = DoctorsPatients.PatientID "
                                  f"WHERE DoctorsPatients.DoctorID = '{doctor_id}'")
 
+    def get_tumor_types_by_doctor_id(doctor_id):
+        """
+        Get a doctor's tumor types.
+        Returns:
+            list: A list of tumor types.
+        """
+        query = """
+            SELECT
+                TTM.TumorType,
+                SUM(CASE WHEN TTM.Category = 'Lung' THEN 1 ELSE 0 END) AS LungCount,
+                SUM(CASE WHEN TTM.Category = 'Brain' THEN 1 ELSE 0 END) AS BrainCount
+            FROM
+                Patients P
+            INNER JOIN
+                TumorTypeMapping TTM ON P.tumor_type = TTM.TumorType
+            INNER JOIN
+                DoctorsPatients DP ON P.id = DP.PatientID
+            WHERE
+                DP.DoctorID = :doctor_id
+            GROUP BY
+                TTM.TumorType;
+        """
+
+        return execute_query(query, params={'doctor_id': doctor_id})
