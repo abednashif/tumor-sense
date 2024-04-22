@@ -1,6 +1,5 @@
 import sqlalchemy as sa
 from sqlalchemy.sql import text
-from flask_login import UserMixin
 
 connection_uri = sa.engine.url.URL(
     "mssql+pyodbc",
