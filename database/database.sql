@@ -79,7 +79,7 @@ CREATE TABLE [dbo].[DoctorsPatients]
 );
 GO
 
-CREATE TABLE TumorTypeMapping
+CREATE TABLE [dbo].[TumorTypeMapping]
 (
     TumorType NVARCHAR(50) PRIMARY KEY,
     Category  NVARCHAR(50) NOT NULL
