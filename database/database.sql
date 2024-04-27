@@ -165,5 +165,8 @@ VALUES ('1', 'msmith', 'pwd1'),
        ('2', 'ejohnson', 'pwd2'),
        ('3', 'wbrown', 'pwd3'),
        ('4', 'owhite', 'pwd4'),
-       ('5', 'jblack', 'pwd5');
+       ('5', 'jblack', 'pwd5'),
+       ('6', 'slee', 'pwd5'),
+       ('7', 'bjmen', 'pwd5'),
+       ('8', 'ava', 'pwd5');
 GO

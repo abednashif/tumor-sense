@@ -30,7 +30,7 @@
                         x="0"
                         xmlns="http://www.w3.org/2000/svg"
                         id="Layer_1"
-                        {#      version="1.1"#}
+                        version="1.1"
                         class="brain-animation"
                         width="30px"
                         height="30px"
@@ -573,6 +573,18 @@
                            placeholder="password" required>
                     <label for="password">Password</label>
                 </div>
+{#                <div class="form-floating">#}
+{#                    {% if message %}#}
+{#                        <div class="alert alert-danger d-flex align-items-center" role="alert">#}
+{#                            <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Danger:">#}
+{#                                <use xlink:href="#exclamation-triangle-fill"/>#}
+{#                            </svg>#}
+{#                            <div>#}
+{#                                {% print message %}#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    {% endif %}#}
+{#                </div>#}
                 <button type="submit" class="btn btn-success" id="submit-btn">Sign In</button>
                 <div class="auth-provider mt-3">
                     <p>Or sign in with:</p>
