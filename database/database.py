@@ -156,39 +156,3 @@ class User:
         """
 
         return execute_query(query, params={'doctor_id': doctor_id})
-
-    def get_average_age_by_tumor_type(doctor_id, doctor_type):
-        """
-        Get the average age for each tumor type with a given doctor type.
-
-        Args:
-            doctor_id (str): The ID of the doctor.
-            doctor_type (str): The type of doctor ('brain' or 'lung').
-
-        Returns:
-            list: A list of dictionaries containing the tumor type and its average age.
-        """
-        if doctor_id is None or doctor_type not in ['brain', 'lung']:
-            return None
-
-        query = """
-            SELECT
-                TTM.TumorType,
-                AVG(P.age) AS AverageAge
-            FROM
-                Patients P
-            INNER JOIN
-                TumorTypeMapping TTM ON P.tumor_type = TTM.TumorType
-            INNER JOIN
-                DoctorsPatients DP ON P.id = DP.PatientID
-            INNER JOIN
-                Doctors D ON DP.DoctorID = D.id
-            WHERE
-                D.id = :doctor_id
-                AND D.doctor_type = :doctor_type
-                AND TTM.Category = :doctor_type
-            GROUP BY
-                TTM.TumorType;
-        """
-
-        return execute_query(query, params={'doctor_id': doctor_id, 'doctor_type': doctor_type})

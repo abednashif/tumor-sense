@@ -12,8 +12,6 @@
     <meta name="google-signin-client_id" content="YOUR_CLIENT_ID.apps.googleusercontent.com">
 
     <title>TumorSense</title>
-    <script type="text/javascript" src="{{ url_for('static', filename='lib/sweetalert.js') }}"></script>
-
     {% include "mainHeader/mainHeader.html" %}
 </head>
 <body>
@@ -575,6 +573,18 @@
                            placeholder="password" required>
                     <label for="password">Password</label>
                 </div>
+{#                <div class="form-floating">#}
+{#                    {% if message %}#}
+{#                        <div class="alert alert-danger d-flex align-items-center" role="alert">#}
+{#                            <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Danger:">#}
+{#                                <use xlink:href="#exclamation-triangle-fill"/>#}
+{#                            </svg>#}
+{#                            <div>#}
+{#                                {% print message %}#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    {% endif %}#}
+{#                </div>#}
                 <button type="submit" class="btn btn-success" id="submit-btn">Sign In</button>
                 <div class="auth-provider mt-3">
                     <p>Or sign in with:</p>
@@ -604,6 +614,7 @@
                             }
                         </script>
                     </div>
+
                 </div>
             </form>
 
@@ -616,17 +627,6 @@
     document.getElementById('submit-btn').addEventListener('click', function (event) {
         var loginForm = document.getElementById('login-form');
         submitLoginForm(loginForm, '/login');
-    });
-
-    $(document).onload(function (){
-        {% if message %}
-            debugger
-            Swal.fire({
-                title: "Invalid details",
-                text: "check login credintials",
-                icon: "error"
-            })
-        {% endif %}
     });
 </script>
 </body>
