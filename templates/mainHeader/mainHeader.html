@@ -19,6 +19,10 @@
     <link rel="stylesheet" type="text/css" href="../static/styles/buttons.css"/>
     <link rel="stylesheet" type="text/css" href="../static/styles/dark.min.css"/>
 
+    {# loader style #}
+    <link rel="stylesheet" type="text/css" href="../static/styles/loader.css"/>
+
+
     {# Fonts #}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,11 +34,10 @@
     <script src="{{ url_for('static', filename='lib/jquery/jquery-3.7.1.min.js') }}" defer></script>
     <script src="{{ url_for('static', filename='lib/sweetalert.js') }}" defer></script>
     <script src="{{ url_for('static', filename='lib/li.js') }}"></script>
-
+    <script src="{{ url_for('static', filename='lib/theme.js') }}"></script>
 
 </head>
 <body>
-
 {% if is_authenticated %}
 
     <div class="header-bar col-lg-12 p-3 d-flex align-items-center justify-content-between">
@@ -80,6 +83,6 @@
 
     </div>
 {% endif %}
-
+    {% include "mainHeader/loader.html" %}
 </body>
 </html>

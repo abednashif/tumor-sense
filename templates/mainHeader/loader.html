@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="{{ url_for('static', filename='lib/jquery/jquery-3.7.1.min.js') }}" defer></script>
+    <script>
+        window.addEventListener('load', function () {
+            document.getElementById('loader-overlay').style.display = 'none';
+        });
+    </script>
+</head>
+<body>
+<div class="loader-overlay" id="loader-overlay">
+    <div class="loader-container">
+        <div class="slice"></div>
+        <div class="slice"></div>
+        <div class="slice"></div>
+        <div class="slice"></div>
+        <div class="slice"></div>
+        <div class="slice"></div>
+    </div>
+</div>
+</body>
+</html>

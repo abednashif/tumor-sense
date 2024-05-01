@@ -12,6 +12,8 @@
     <meta name="google-signin-client_id" content="YOUR_CLIENT_ID.apps.googleusercontent.com">
 
     <title>TumorSense</title>
+    <script type="text/javascript" src="{{ url_for('static', filename='lib/sweetalert.js') }}"></script>
+
     {% include "mainHeader/mainHeader.html" %}
 </head>
 <body>
@@ -30,7 +32,7 @@
                         x="0"
                         xmlns="http://www.w3.org/2000/svg"
                         id="Layer_1"
-                        {#      version="1.1"#}
+                        version="1.1"
                         class="brain-animation"
                         width="30px"
                         height="30px"
@@ -602,7 +604,6 @@
                             }
                         </script>
                     </div>
-
                 </div>
             </form>
 
@@ -615,6 +616,17 @@
     document.getElementById('submit-btn').addEventListener('click', function (event) {
         var loginForm = document.getElementById('login-form');
         submitLoginForm(loginForm, '/login');
+    });
+
+    $(document).onload(function (){
+        {% if message %}
+            debugger
+            Swal.fire({
+                title: "Invalid details",
+                text: "check login credintials",
+                icon: "error"
+            })
+        {% endif %}
     });
 </script>
 </body>
