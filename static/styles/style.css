@@ -286,7 +286,6 @@ input {
     justify-content: space-between;
     align-items: center;
     flex-direction: column;
-    height: 40vh;
 }
 
 .form-group {
@@ -401,4 +400,9 @@ border: 1px solid darkslategray;
     cursor: pointer;
     font-size: 26px;
     color: var(--export-icons-color);
+}
+
+.chart{
+    width: 400px !important;
+    height: 400px !important;
 }
