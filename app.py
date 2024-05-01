@@ -41,6 +41,20 @@ brain_detection_counter = {
     'Adenoma': 0
 }
 
+lung_detection_age = {
+    'Adenocarcinoma': 0,
+    'Large cell carcinoma': 0,
+    'Normal': 0,
+    'Squamous cell carcinoma': 0,
+}
+
+brain_detection_age = {
+    'Glioma': 0,
+    'Meningioma': 0,
+    'Normal': 0,
+    'Adenoma': 0
+}
+
 brain_model = BrainTumor()
 lung_model = LungTumor()
 
@@ -91,6 +105,35 @@ def load_tumorTypesCounts(doctor_id):
             lung_detection_counter[tumor_type] += lung_count
         if brain_count > 0:
             brain_detection_counter[tumor_type] += brain_count
+
+def load_average_age(doctor_id, doctor_type):
+    global lung_detection_age, brain_detection_age
+
+    #rest
+    lung_detection_age = {
+        'Adenocarcinoma': 0,
+        'Large cell carcinoma': 0,
+        'Normal': 0,
+        'Squamous cell carcinoma': 0,
+    }
+
+    brain_detection_age = {
+        'Glioma': 0,
+        'Meningioma': 0,
+        'Normal': 0,
+        'Adenoma': 0
+    }
+
+    res = User.get_average_age_by_tumor_type(doctor_id, doctor_type)
+
+    for tumor_type, _avg in res:
+        if tumor_type == 'Normal_l' or tumor_type == 'Normal_b':
+            tumor_type = 'Normal'
+        if doctor_type == 'lung':
+            lung_detection_age[tumor_type] = _avg
+        if doctor_type == 'brain':
+            brain_detection_age[tumor_type] = _avg
+
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -321,14 +364,17 @@ def view_prediction_page(model_type):
         return redirect(url_for('index'))
 
     load_tumorTypesCounts(_user['id'])
+    load_average_age(_user['id'], _user['doctor_type'])
 
     match type:
         case 'lung':
-            return render_template('predict.html', detection_counter=json.dumps(lung_detection_counter),
-                                   type='lung', title="Lung", showPopup='false', is_authenticated=is_authenticated)
+            return render_template('predict.html', detection_counter=json.dumps(lung_detection_counter)
+                                   ,avg_age=json.dumps(lung_detection_age), type='lung',
+                                   title="Lung", showPopup='false', is_authenticated=is_authenticated)
         case 'brain':
-            return render_template('predict.html', detection_counter=json.dumps(brain_detection_counter),
-                                   type='brain', title="Brain", showPopup='false', is_authenticated=is_authenticated)
+            return render_template('predict.html', detection_counter=json.dumps(brain_detection_counter)
+                                   ,avg_age=json.dumps(brain_detection_age), type='brain',
+                                   title="Brain", showPopup='false', is_authenticated=is_authenticated)
 
         case _:
             return render_template('dashboard.html')
