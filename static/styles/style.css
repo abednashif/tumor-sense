@@ -280,6 +280,10 @@ input {
     animation: gradientAnimation 1s infinite;
 }
 
+.welcome-image-container{
+    margin: 5% 4%;
+    aspect-ratio: 1;
+}
 
 .form-container {
     display: flex;
@@ -335,6 +339,10 @@ input {
 
 .welcome-container {
     max-width: 100%;
+    border: 2px solid gray;
+    border-radius: 15px;
+    padding: 5em;
+    justify-content: space-between;
 }
 
 text[font-family="applied-button-font-0"] {
@@ -405,4 +413,16 @@ border: 1px solid darkslategray;
 .chart{
     width: 400px !important;
     height: 400px !important;
+}
+
+.img-thumbnail{
+    width: 100% !important;
+    height: 100% !important;
+    border: unset !important;
+    background: unset !important;
+}
+
+.signin-container{
+    height: fit-content;
+    transform: translateY(20%);
 }
