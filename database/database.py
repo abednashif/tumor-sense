@@ -1,22 +1,9 @@
 import sqlalchemy as sa
 from sqlalchemy.sql import text
 
-connection_uri = sa.engine.url.URL(
-    "mssql+pyodbc",
-    username="sa",
-    password="pass_1234",
-    host="127.0.0.1",
-    database="TumorSense",
-    port=1433,
-    query={
-        "driver": "ODBC Driver 17 for SQL Server",
-        "ApplicationIntent": "ReadOnly",
-    },
-)
-
+connection_uri = "sqlite:///database/database.db"
 
 engine = sa.create_engine(connection_uri)
-
 
 def execute_query(query, params=None):
     """

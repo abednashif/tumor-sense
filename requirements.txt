@@ -6,6 +6,5 @@ astunparse
 sqlalchemy
 markupsafe
 reportlab
-ast
 werkzeug
-smtplib
+pyodbc
