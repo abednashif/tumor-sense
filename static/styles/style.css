@@ -410,6 +410,10 @@ border: 1px solid darkslategray;
     color: var(--export-icons-color);
 }
 
+.charts-container{
+    width: 50dvw;
+}
+
 .chart{
     width: 400px !important;
     height: 400px !important;
