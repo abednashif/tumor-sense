@@ -19,8 +19,8 @@
 <body>
 
 <div class="container-center">
-    <div class="container welcome-container d-flex">
-        <div class="col-lg-7 welcome-image-container">
+    <div class="container welcome-container d-flex flex-wrap justify-content-around align-items-center">
+        <div class="col-lg-5 col-md-5 col-sm-3 flex-wrap welcome-image-container">
             <img src="{{ url_for('static', filename='images/mainPageBackground.png') }}" draggable="false"
                  alt="Placeholder Image"
                  class="img-thumbnail">
@@ -562,7 +562,7 @@
 </svg>
             </div>
         </div>
-        <div class="col-lg-5 signin-container">
+        <div class="ccol-lg-4 col-md-5 col-sm-4 signin-container">
             <form class="auth-form" action="/login" method="post" id="login-form">
                 <h2>Sign In</h2>
                 <div class="form-floating mb-3">

@@ -281,7 +281,7 @@ input {
 }
 
 .welcome-image-container{
-    margin: 5% 4%;
+    margin: 4% 4%;
     aspect-ratio: 1;
 }
 
@@ -334,12 +334,14 @@ input {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 100%;
 }
 
 .welcome-container {
     max-width: 100%;
-    border: 2px solid gray;
+    border: 2px solid #474747;
+    background: #2d2d2d;
+    box-shadow: 0 0 10px 0 #585858;
     border-radius: 15px;
     padding: 5em;
     justify-content: space-between;
@@ -424,9 +426,77 @@ border: 1px solid darkslategray;
     height: 100% !important;
     border: unset !important;
     background: unset !important;
+    animation: ribbon-colors 20s ease-out infinite
 }
+
+@keyframes ribbon-colors {
+    0% {
+        filter: unset;
+    }
+    5% {
+        filter: invert(80%) sepia(100%) saturate(300%) hue-rotate(160deg) brightness(95%) contrast(80%);
+    }
+    10% {
+        filter: invert(80%) sepia(100%) saturate(300%) hue-rotate(310deg) brightness(95%) contrast(80%);
+    }
+    15% {
+        filter: invert(80%) sepia(100%) saturate(300%) hue-rotate(460deg) brightness(95%) contrast(80%);
+    }
+    20% {
+        filter: invert(80%) sepia(100%) saturate(300%) hue-rotate(610deg) brightness(95%) contrast(80%);
+    }
+    25% {
+        filter: invert(80%) sepia(100%) saturate(300%) hue-rotate(760deg) brightness(95%) contrast(80%);
+    }
+    30% {
+        filter: invert(80%) sepia(100%) saturate(300%) hue-rotate(910deg) brightness(95%) contrast(80%);
+    }
+    35% {
+        filter: invert(80%) sepia(100%) saturate(300%) hue-rotate(1060deg) brightness(95%) contrast(80%);
+    }
+    40% {
+        filter: invert(80%) sepia(100%) saturate(300%) hue-rotate(1210deg) brightness(95%) contrast(80%);
+    }
+    45% {
+        filter: invert(80%) sepia(100%) saturate(300%) hue-rotate(1360deg) brightness(95%) contrast(80%);
+    }
+    50% {
+        filter: invert(80%) sepia(100%) saturate(300%) hue-rotate(1510deg) brightness(95%) contrast(80%);
+    }
+    55% {
+        filter: invert(80%) sepia(100%) saturate(300%) hue-rotate(1660deg) brightness(95%) contrast(80%);
+    }
+    60% {
+        filter: invert(80%) sepia(100%) saturate(300%) hue-rotate(1810deg) brightness(95%) contrast(80%);
+    }
+    65% {
+        filter: invert(80%) sepia(100%) saturate(300%) hue-rotate(1960deg) brightness(95%) contrast(80%);
+    }
+    70% {
+        filter: invert(80%) sepia(100%) saturate(300%) hue-rotate(2110deg) brightness(95%) contrast(80%);
+    }
+    75% {
+        filter: invert(80%) sepia(100%) saturate(300%) hue-rotate(2260deg) brightness(95%) contrast(80%);
+    }
+    80% {
+        filter: invert(80%) sepia(100%) saturate(300%) hue-rotate(2410deg) brightness(95%) contrast(80%);
+    }
+    85% {
+        filter: invert(80%) sepia(100%) saturate(300%) hue-rotate(2560deg) brightness(95%) contrast(80%);
+    }
+    90% {
+        filter: invert(80%) sepia(100%) saturate(300%) hue-rotate(2710deg) brightness(95%) contrast(80%);
+    }
+    95% {
+        filter: invert(80%) sepia(100%) saturate(300%) hue-rotate(2860deg) brightness(95%) contrast(80%);
+    }
+    100% {
+        filter: invert(80%) sepia(100%) saturate(300%) hue-rotate(3010deg) brightness(95%) contrast(80%);
+    }
+}
+
 
 .signin-container{
     height: fit-content;
-    transform: translateY(20%);
+    transform: translateY(10%);
 }
