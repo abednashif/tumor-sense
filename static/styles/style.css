@@ -426,7 +426,7 @@ border: 1px solid darkslategray;
     height: 100% !important;
     border: unset !important;
     background: unset !important;
-    animation: ribbon-colors 20s ease-out infinite
+    animation: ribbon-colors 30s ease-out infinite
 }
 
 @keyframes ribbon-colors {
