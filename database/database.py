@@ -159,23 +159,24 @@ class User:
             return None
 
         query = """
-            SELECT
-                TTM.TumorType,
-                AVG(P.age) AS AverageAge
-            FROM
-                Patients P
-            INNER JOIN
-                TumorTypeMapping TTM ON P.tumor_type = TTM.TumorType
-            INNER JOIN
-                DoctorsPatients DP ON P.id = DP.PatientID
-            INNER JOIN
-                Doctors D ON DP.DoctorID = D.id
-            WHERE
-                D.id = :doctor_id
-                AND D.doctor_type = :doctor_type
-                AND TTM.Category = :doctor_type
-            GROUP BY
-                TTM.TumorType;
+              SELECT
+                    TTM.TumorType,
+                    AVG(P.age) AS AverageAge
+                FROM
+                    Patients P
+                INNER JOIN
+                    DoctorsPatients DP ON P.id = DP.PatientID
+                INNER JOIN
+                    Doctors D ON DP.DoctorID = D.id
+                INNER JOIN
+                    TumorTypeMapping TTM ON lower(D.doctor_type) = lower(TTM.Category)
+                WHERE
+                    D.id = :doctor_id
+                    AND lower(D.doctor_type) = :doctor_type
+                    AND lower(TTM.Category) = :doctor_type
+    
+                GROUP BY
+                    TTM.TumorType;
         """
 
         return execute_query(query, params={'doctor_id': doctor_id, 'doctor_type': doctor_type})

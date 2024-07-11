@@ -1,3 +1,5 @@
+from email.mime.application import MIMEApplication
+from email.mime.multipart import MIMEMultipart
 import os
 import random
 
@@ -273,7 +275,7 @@ def export_to_pdf():
 def send_email():
     email = request.json.get('email')
 
-    if prediction and email:
+    if _prediction and email:
         _user_fullname = _user['firstname'] + _user['lastname']
         pdf_filename = f'{_user_fullname}.pdf'
         pdf_content = generate_pdf(_prediction, pdf_filename, title)
