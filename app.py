@@ -12,6 +12,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph
 from werkzeug.utils import secure_filename
+# from gevent.pywsgi import WSGIServer
 
 from TumorSenseV1 import BrainTumor, LungTumor
 from database.database import User
@@ -404,3 +405,6 @@ def view_model():
 if __name__ == '__main__':
     # app.run(debug=True, port=8002)
     app.run(host='0.0.0.0', port=8001)
+    #production
+    # http_server = WSGIServer(('', 8001), app)
+    # http_server.serve_forever()

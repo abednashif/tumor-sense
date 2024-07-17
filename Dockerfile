@@ -28,5 +28,9 @@ EXPOSE 8001
 ENV FLASK_APP=TumorSense
 
 # Run the Flask app when the container starts
+
+
 #CMD ["flask", "run", "--host", "0.0.0.0"]
 CMD ["python", "app.py", "--host=0.0.0.0", "--port", "8001"]
+
+CMD ["gunicorn", "--bind", "0.0.0.0:8001", "app:app"]

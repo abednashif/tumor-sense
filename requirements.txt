@@ -6,3 +6,4 @@ SQLAlchemy
 MarkupSafe
 reportlab
 Werkzeug
+gunicorn
