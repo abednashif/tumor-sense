@@ -90,7 +90,9 @@ body {
 
 .header-bar {
     border-bottom: var(--header-bar-border);
+    background-color: var(--main-background-color-dark);
     position: sticky;
+    z-index: 10;
     top: 0;
     /*background: var(--bs-dark);*/
 }

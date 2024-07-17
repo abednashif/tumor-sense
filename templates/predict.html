@@ -82,12 +82,56 @@
 
         TypeWriter(report_text, 'predict_report_text', 15)
 
-        document.getElementById('export-pdf').addEventListener('click', function () {
+        /*document.getElementById('export-pdf').addEventListener('click', function () {
             sendRequest('/export-pdf');
         });
 
         document.getElementById('send-mail').addEventListener('click', function () {
             sendRequest('/send-mail');
+        });*/
+
+        document.getElementById('export-pdf').addEventListener('click', function () {
+            fetch('/export-pdf', { method: 'POST' })
+                .then(response => response.blob())
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = 'prediction.pdf';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while exporting the PDF.');
+                });
+        });
+        
+        document.getElementById('send-mail').addEventListener('click', function () {
+            const email = prompt("Please enter the recipient's email address:");
+            if (email) {
+                fetch('/send-mail', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email: email }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Email sent successfully!');
+                    } else {
+                        alert('Failed to send email: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while sending the email.');
+                });
+            }
         });
 
         if ({{ showPopup }}) {

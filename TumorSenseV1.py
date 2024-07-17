@@ -1,11 +1,9 @@
-import tensorflow as tf
-from tensorflow.keras.models import load_model
 import os
 import numpy as np
-from tensorflow.keras.preprocessing.image import load_img, img_to_array, array_to_img
-from tensorflow.keras.optimizers import Adam
 from markupsafe import Markup
-
+from tensorflow.keras.models import load_model
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.preprocessing.image import load_img, img_to_array, array_to_img
 
 class BrainTumor:
     _MRI = 'MRI'
