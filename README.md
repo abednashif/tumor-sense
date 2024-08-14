@@ -46,7 +46,7 @@ Pituitary tumors are abnormal growths that develop in your pituitary gland. Some
 # Dataset
 We collected a dataset of brain MRI images from openly available MRI datasets on Kaggle, HuggingFace,
 we used ~10k images, 82% of the dataset is used for training, whereas 18% of the dataset is used for testing. <br>
-Images are all scaled to 224 x 224, to improve the model's generalizability, data augmentation
+Images are all scaled to 512 x 512, to improve the model's generalizability, data augmentation
 strategies can be used to increase the diversity of the training sample when the dataset volume is small.
 
 - Data collection 
@@ -87,16 +87,22 @@ Total number of augmented training images: 11k.
 
 # Model Architecture
 <div>
-    <img src="MD_images/TumorSense_CNN.svg" height="100px" alt="cnn network architecture"/>
+    <img src="markdownImages/TumorSense-CNN.png" height="100px" alt="cnn network architecture"/>
 </div>
 
-# Model Performance
-<div>
-    <img src="MD_images/accuracy.png" alt="model accuracy" width="841"/>
-</div>
-<div>
-    <img src="MD_images/confusion_matrix.png" alt="confusion matrix" width="841"/>
-</div>
+[//]: # (# Model Performance)
+
+[//]: # (<div>)
+
+[//]: # (    <img src="MD_images/accuracy.png" alt="model accuracy" width="841"/>)
+
+[//]: # (</div>)
+
+[//]: # (<div>)
+
+[//]: # (    <img src="MD_images/confusion_matrix.png" alt="confusion matrix" width="841"/>)
+
+[//]: # (</div>)
 
 ### Performance evaluation of deep learning models and our model
 <div>
