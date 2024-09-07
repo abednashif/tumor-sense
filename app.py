@@ -7,6 +7,7 @@ from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from flask import Flask, render_template, request, send_file, redirect, flash, url_for, json, jsonify, session
+from flask_login import LoginManager, login_required 
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import ParagraphStyle
@@ -20,7 +21,9 @@ from database.database import User
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
-
+login_manager = LoginManager(app)
+login_manager.init_app(app)
+login_manager.login_view = 'login'
 
 is_authenticated = False
 _user = None
@@ -110,7 +113,6 @@ def load_tumorTypesCounts(doctor_id):
 def load_average_age(doctor_id, doctor_type):
     global lung_detection_age, brain_detection_age
 
-    #rest
     lung_detection_age = {
         'Adenocarcinoma': 0,
         'Large cell carcinoma': 0,
@@ -138,10 +140,6 @@ def load_average_age(doctor_id, doctor_type):
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-def load_user(user_id):
-    return User.get_doctor_user_by_id(user_id)
 
 def generate_pdf(prediction, prediction_description, title):
     buffer = BytesIO()
@@ -217,6 +215,9 @@ def send_email_with_attachment(recipient_email, filename, attachment):
         print(f"Error sending email: {str(e)}")
         raise
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User.get(user_id)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -251,12 +252,17 @@ def index():
         return render_template('dashboard.html', is_authenticated=True,
                                    user_type=_user['doctor_type'])
     elif _user is None:
-        return render_template('welcome.html', is_authenticated=False, message="invalid username or password")
+        return render_template('home.html', is_authenticated=False, message="invalid username or password")
     else:
-        return  render_template('welcome.html', is_authenticated=False)
+        return  render_template('home.html', is_authenticated=False)
+
+@app.route('/welcome')
+def welcome():
+    return render_template('welcome.html')
+
 
 @app.route('/dashboard')
-# @login_required
+@login_required
 def dashboard():
     if is_authenticated:
         return render_template('dashboard.html', is_authenticated=True,

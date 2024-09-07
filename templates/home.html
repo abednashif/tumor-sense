@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TumorSense - AI-Powered Tumor Detection</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/home.css') }}"/>
+</head>
+<body>
+    <div class="background-overlay"></div>
+
+    <header>
+        <div class="container">
+            <div id="branding">
+                <h1><span class="highlight">Tumor</span>Sense</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li class="current"><a href="{{ url_for('index') }}">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#services">Services</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section id="showcase">
+        <div class="container">
+            <h1>AI-Powered Tumor Detection</h1>
+            <p>Revolutionizing medical diagnostics with cutting-edge artificial intelligence</p>
+            <a href="{{ url_for('welcome') }}" class="button">Try It Now</a>
+        </div>
+    </section>
+
+    <section id="about">
+        <div class="container">
+            <h2>Discover Our Innovative Solution</h2>
+            <p>Welcome to TumorSense, where we make tumor detection smarter, faster, and more accurate! Our technology dives deep into the complex world of the brain and lungs to help diagnose tumors with ease.</p>
+            
+            <p>Think of our AI as a highly skilled assistant that never gets tired. It examines MRI scans of the brain and CT scans of the lungs to find tumors—something that even the sharpest eyes can miss. Whether it’s spotting brain tumors or detecting lung abnormalities, TumorSense is here to help medical professionals stay ahead.</p>
+
+            <p>Why is this important? Early diagnosis is crucial. Brain tumors can be tricky, and lung cancer often hides in plain sight until it’s too late. Our solution uses the latest AI tech to catch these issues early, providing a valuable tool for doctors to make better decisions and improve patient outcomes.</p>
+
+            <h3>Brain Tumors</h3>
+            <p>Brain tumors come in many forms and can be benign or malignant. Our AI accurately analyzes MRI images to identify and classify these tumors, helping doctors plan effective treatments.</p>
+
+            <h3>Lung Tumors</h3>
+            <p>Detecting lung tumors early is crucial. Our AI model scans chest MRI images to spot even the slightest signs of trouble, giving healthcare providers the insights they need to act swiftly.</p>
+
+            <p>We're excited about our journey and the potential of AI to transform medical diagnostics. Stay tuned for more updates as we continue to innovate and make a difference!</p>
+        </div>
+    </section>
+
+    <section id="services">
+        <div class="container">
+            <h2>Our Services</h2>
+            <div class="box">
+                <img src="https://img.icons8.com/color/96/000000/web-design.png" alt="Web App"/>
+                <h3>Web App</h3>
+                <p>Access TumorSense online with ease! Log in to our intuitive web app to start analyzing images and detecting tumors right away.</p>
+            </div>
+            <div class="box">
+                <img src="https://img.icons8.com/color/96/000000/docker.png" alt="Offline App"/>
+                <h3>Offline App</h3>
+                <p>Prefer working offline? No problem! Run TumorSense on your local server with Docker. Just pull the image with <code>docker pull abednashif/tumor-sense:latest</code> and start detecting tumors without an internet connection.</p>
+            </div>
+            <div class="box">
+                <img src="https://img.icons8.com/color/96/000000/api.png" alt="SDK"/>
+                <h3>API (Coming Soon)</h3>
+                <p>We’re working on an SDK that will allow seamless integration of TumorSense into any application. Stay tuned for a powerful API that will make tumor detection even more accessible and efficient!</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>TumorSense, Copyright &copy; 2024</p>
+    </footer>
+
+    <script>
+
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                const headerOffset = document.querySelector('header').offsetHeight;
+                const elementPosition = targetElement.getBoundingClientRect().top + window.scrollY;
+                const offsetPosition = elementPosition - headerOffset;
+    
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

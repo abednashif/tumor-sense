@@ -1,5 +1,6 @@
 import sqlalchemy as sa
 from sqlalchemy.sql import text
+from flask_login import UserMixin
 
 connection_uri = "sqlite:///database/database.db"
 
@@ -66,17 +67,19 @@ class User:
         self.username = user_data['username']
         self.password = user_data['password']
         self.is_active = True
+        self.firstname = user_data.get('firstname')
+        self.lastname = user_data.get('lastname')
+        self.doctor_type = user_data.get('doctor_type')
+        
     @staticmethod
     def get(self, user_id):
-        user_data = get_doctor_user_by_id(user_id)
+        user_data = self.get_doctor_user_by_id(user_id)
         return User(user_data) if user_data else None
 
     @staticmethod
     def get_by_username(self, username):
         user_data = self.get_doctor_user_by_username(username)
         return User(user_data) if user_data else None
-
-
 
     def get_doctor_user_by_id(doctor_id):
         """

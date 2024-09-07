@@ -1,0 +1,139 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+
+    --header-bar-color: #275985;
+    scroll-padding-top: 100px;
+}
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    background: url("../images/mainBackground.webp") no-repeat center center fixed;
+    background-size: cover;
+    position: relative;
+    overflow-x: hidden;
+}
+
+.background-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100vh;
+    background: rgb(255 255 255 / 95%);
+    z-index: -1;
+}
+
+.container {
+    width: 80%;
+    margin: auto;
+    overflow: hidden;
+}
+
+header {
+    background: var(--header-bar-color);
+    color: white;
+    padding-top: 20px;
+    min-height: 70px;
+    border-bottom: wheat 3px solid;
+
+    position: sticky; 
+    top: 0; 
+    z-index: 1000;
+}
+header a {
+    color: #ffffff;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 16px;
+}
+header li {
+    float: left;
+    display: inline;
+    padding: 0 20px 0 20px;
+}
+header #branding {
+    float: left;
+}
+header #branding h1 {
+    margin: 0;
+}
+header nav {
+    float: right;
+    margin-top: 10px;
+}
+header .highlight, header .current a {
+    color: #ffffff;
+    font-weight: bold;
+}
+header a:hover {
+    color: #ffffff;
+    font-weight: bold;
+}
+
+#showcase {
+    min-height: 400px;
+    background: url('https://source.unsplash.com/1600x900/?medical,technology') no-repeat center center/cover;
+    text-align: center;
+    color: #ffffff;
+}
+
+#showcase h1 {
+    margin-top: 100px;
+    font-size: 55px;
+    margin-bottom: 10px;
+}
+
+#showcase p {
+    font-size: 20px;
+}
+
+#boxes {
+    margin-top: 20px;
+}
+
+#boxes .box {
+    float: left;
+    text-align: center;
+    width: 30%;
+    padding: 10px;
+}
+
+#boxes .box img {
+    width: 90px;
+}
+
+.button {
+    display: inline-block;
+    font-size: 18px;
+    padding: 10px 20px;
+    background: var(--header-bar-color);
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+.button:hover {
+    background: #333333;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+footer {
+    padding: 20px;
+    color: #ffffff;
+    background-color: var(--header-bar-color);
+    text-align: center;
+    flex-shrink: 0;
+}
+
+#services {
+    margin-block: 3rem;
+}

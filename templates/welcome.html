@@ -618,16 +618,15 @@
         submitLoginForm(loginForm, '/login');
     });
 
-    $(document).onload(function (){
-        {% if message %}
-            debugger
-            Swal.fire({
-                title: "Invalid details",
-                text: "check login credintials",
-                icon: "error"
-            })
-        {% endif %}
-    });
+    {% if message %}
+      $(document).onload(function (){
+        Swal.fire({
+            title: "Invalid details",
+            text: "check login credintials",
+            icon: "error"
+          })
+      });
+    {% endif %}
 </script>
 </body>
 </html>
