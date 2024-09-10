@@ -312,13 +312,23 @@ input {
 }
 
 .upload-label {
-    display: inline-block;
+    display: flex;
     cursor: pointer;
     margin-right: 10px;
+    flex-direction: column;
+    align-items: center;
 }
 
 .upload-file {
     display: none;
+}
+
+.upload-text {
+    margin-top: 6px;
+    border: 1px solid #363636;
+    border-radius: 4px;
+    padding: 1ch;
+    background: #4d4d4d;
 }
 
 .upload-label svg:hover {
@@ -328,8 +338,9 @@ input {
 
 .form-upload {
     display: flex;
-    align-items: center;
     position: relative;
+    flex-direction: row;
+    align-items: baseline;
 }
 
 .container-center {
@@ -523,5 +534,15 @@ border: 1px solid darkslategray;
 }
 
 body.loading .signin-container {
+    display: none;
+}
+
+.file-name {
+    margin-left: 10px;
+    font-size: 14px;
+    color: var(--text); 
+}
+
+input.upload-file {
     display: none;
 }
