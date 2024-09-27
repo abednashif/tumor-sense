@@ -7,8 +7,11 @@
     <script src="{{ url_for('static', filename='lib/jquery/jquery-3.7.1.min.js') }}"></script>
 </head>
 <body>
-<canvas class="chart" id="statistics_line_chart" width="400px" height="400px"></canvas>
 
+<div class="chart-container text-center">
+    <canvas class="chart ml-3" id="statistics_line_chart" width="400px" height="400px"></canvas>
+    <label class="label label-primary fst-italic mt-3">{{ "Average patients age by type" }}</label>
+</div>
 <script>
     {# Line chart JS #}
     console.log("JSON data");

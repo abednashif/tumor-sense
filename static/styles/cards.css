@@ -6,7 +6,7 @@
     padding: 1em;
     border: 1px solid rgba(0, 0, 0, 0.2);
     overflow: hidden;
-    margin-inline: 3ch;
+    margin: 3ch;
     background-color: var(--card-bg);
     border-radius: var(--main-border-radius);
     box-shadow: 0 0 20px 1px #506e85;

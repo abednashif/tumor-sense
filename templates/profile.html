@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Profile</title>
+    {% include "mainHeader/mainHeader.html" %}
+</head>
+<body>
+    <div class="container-fluid pt-3">
+        <div class="row">
+            <div class="p-2 text-center title">Profile</div>
+            <div class="profile-container d-flex flex-row justify-content-evenly flex-wrap">
+
+                <div class="profile-details mt-4 col-lg-6 col-md-12 col-sm-12">
+                    <h3 class="sub-title">Details</h3>
+
+                    <div class="d-flex">
+                        <span class="main-text fw-bold m-2">Username:</span>
+                        <span class="main-text m-2">{{ user.username }}</span>
+                    </div>
+
+                    <div class="d-flex">
+                        <span class="main-text fw-bold m-2">First Name:</span>
+                        <span class="main-text m-2">{{ user.firstname or 'Not Provided' }}</span>
+                    </div>
+
+                    <div class="d-flex">
+                        <span class="main-text fw-bold m-2">Last Name:</span>
+                        <span class="main-text m-2">{{ user.lastname or 'Not Provided' }}</span>
+                    </div>
+
+                    <div class="d-flex">
+                        <span class="main-text fw-bold m-2">Doctor Type:</span>
+                        <span class="main-text m-2">{{ user.doctor_type or 'Not Provided' }}</span>
+                    </div>
+
+                    <div class="d-flex">
+                        <span class="main-text fw-bold m-2">Email:</span>
+                        <span class="main-text m-2">{{ user.email or 'Not Provided' }}</span>
+                    </div>
+
+                    <div class="d-flex">
+                        <span class="main-text fw-bold m-2">Joined:</span>
+                        <span class="main-text m-2">{{ user.joined or 'Not Available' }}</span>
+                    </div>
+                </div>
+
+                <div class="patient-list mt-4 col-lg-6 col-md-12 col-sm-12">
+                    <h3 class="sub-title">Patients</h3>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Age</th>
+                                <th>Sex</th>
+                                <th>Tumor Type</th>
+                                <th>Last Checkup</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for patient in patients %}
+                                <tr>
+                                    <td>{{ patient.firstname }}</td>
+                                    <td>{{ patient.lastname }}</td>
+                                    <td>{{ patient.age }}</td>
+                                    <td>{{ patient.sex }}</td>
+                                    <td>{{ patient.tumor_type or 'N/A' }}</td>
+                                    <td>{{ patient.last_checkup if patient.last_checkup else 'N/A' }}</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="6">No patients found.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+{#                <div class="profile-actions mt-3">#}
+{#                    <form method="POST" action="{{ url_for('logout') }}">#}
+{#                        <button class="btn btn-warning" type="submit">Logout</button>#}
+{#                    </form>#}
+{#                </div>#}
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='lib/sendRequest.js') }}" defer></script>
+</body>
+</html>

@@ -39,36 +39,32 @@
 </head>
 <body>
 {% if is_authenticated %}
-
-    <div class="header-bar col-lg-12 p-3 d-flex align-items-center justify-content-between">
-        <a class="mb-0" href={{ url_for('index') }}>TumorSense</a>
+    <div class="header-bar col-lg-12 pi-1-6 d-flex align-items-center justify-content-between">
+        <a class="mb-0 branding" href="{{ url_for('index') }}">TumorSense</a>
 
         <div class="right-content d-flex flex-row align-items-end">
             <a class="reservations-icon">
                 <i class="bi bi-bell position-relative"></i>
                 <span class="position-absolute translate-middle badge rounded-pill bg-danger">
-                99+
-                <span class="visually-hidden">unread messages</span>
-              </span>
-
+                    99+
+                    <span class="visually-hidden">unread messages</span>
+                </span>
             </a>
             <div class="dropdown">
                 <input type="checkbox" class="sr-only hidden-input" id="dropdown-toggle">
                 <label for="dropdown-toggle" class="avatar-label">
-
-                    <img class="user-image user-select-none " draggable="false"
+                    <img class="user-image user-select-none" draggable="false"
                          src="{{ url_for('static', filename='images/default_avatar.jpg') }}" alt="User Avatar">
                 </label>
                 <div class="dropdown-content">
                     <div class="user-info">
-                        <span class="username">
-                            {{ session['displayname'] }}
-                        </span>
+                        <a class="username" href="{{ url_for('get_profile', username=current_user.username) }}">
+                            {{ session.get('displayname', 'Guest') }}
+                        </a>
                     </div>
                     <div class="preferences-content">
                         Theme
-                        <select data-theme-picker class="btn btn-secondary dropdown-toggle" name="themepicker"
-                                id="theme">
+                        <select data-theme-picker class="btn btn-secondary dropdown-toggle" name="themepicker" id="theme">
                             <option value="💻">System</option>
                             <option value="☀️">Light</option>
                             <option value="🌑">Dark</option>
@@ -80,9 +76,8 @@
                 </div>
             </div>
         </div>
-
     </div>
 {% endif %}
-    {% include "mainHeader/loader.html" %}
+{% include "mainHeader/loader.html" %}
 </body>
 </html>

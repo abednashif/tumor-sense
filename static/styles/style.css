@@ -2,7 +2,7 @@
     --main-height: 100dvh;
 
     --main-background-color-light: #cfcfcf;
-    --main-background-color-dark: #212121;
+    --main-background-color-dark: #193248;
 
     /* Dark Mode - Light Mode */
     --base: #cfcfcf;
@@ -10,7 +10,7 @@
     --card-bg: #404040;
 
     /* Analogous Color Palette*/
-    --main-title-color: #2a84d3;
+    --main-title-color: #cfcfcf;
     --main-text-color: #3477B2;
     --main-secondary-text-color: #3438B2;
     --main-accent-color: #34B2AE;
@@ -18,7 +18,7 @@
 
     --upload-icon-hover: #52a2e9;
 
-    --header-bar-color: #275985;
+    --header-bar-color: #193248;
     --header-bar-border: 2px solid var(--header-bar-color);
 
     --export-icons-color: #70afff;
@@ -73,7 +73,7 @@
 
 html,
 body {
-    font-family: "Overpass", sans-serif !important;
+    font-family: "Sagoe UI", "Overpass", sans-serif !important;
     font-optical-sizing: auto;
     font-style: normal;
     height: var(--main-height);
@@ -88,16 +88,33 @@ body {
     /*background-color: var(--bs-dark) !important;*/
 }
 
-.header-bar {
-    border-bottom: var(--header-bar-border);
-    background-color: var(--main-background-color-dark);
-    position: sticky;
-    z-index: 10;
-    top: 0;
-    /*background: var(--bs-dark);*/
+.main-text{
+    color: var(--text);
 }
 
-.header-bar a {
+.sub-title{
+    background-image: linear-gradient(to right, #8888ff 0%, #282828 51%, #c680e4 100%) !important;
+    color: transparent !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+}
+
+.pi-1-6{
+    padding: 1rem 6rem !important;
+}
+
+.header-bar {
+    background: var(--header-bar-color);
+    color: var(--main-text-color);
+    padding-top: 20px;
+    min-height: 70px;
+    border-bottom: var(--main-background-color-light) 3px solid;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-bar .branding {
     color: var(--main-title-color) !important;
     text-decoration: none;
     font-size: 40px;
@@ -106,6 +123,10 @@ body {
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
+}
+
+td{
+    color: var(--text);
 }
 
 label {
@@ -141,8 +162,8 @@ input {
     position: absolute;
     top: 80%;
     right: 3rem;
-    width: 25ch;
-    height: 13ch;
+    width: 300px;
+    height: 180px;
     background-color: var(--base);
     border: 1px solid #5c5c5c;
     border-radius: var(--main-border-radius);
@@ -175,13 +196,23 @@ input {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    justify-content: space-between;
+    justify-content: space-around;
 }
 
 .dropdown-content .username {
-    color: var(--text); /* Added text color */
+    color: var(--text);
+    font-size: 20px;
+    text-decoration: none;
+    font-weight: 500;
 }
 
+.dropdown-content .username:hover {
+    background-image: linear-gradient(to right, #9f9fdf 0%, #1CB5E0 51%, #9b58b8 100%) !important;
+    color: transparent !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    text-align: center !important;
+}
 
 @keyframes scale-down {
     from {
@@ -426,12 +457,21 @@ border: 1px solid darkslategray;
 }
 
 .charts-container{
-    width: 50dvw;
+    /*width: 1200px;*/
+    flex-wrap: wrap;
 }
 
 .chart{
     width: 400px !important;
     height: 400px !important;
+}
+
+#statistics_pie_chart{
+    margin-right: 2rem;
+}
+
+#statistics_line_chart{
+    margin-left: 2rem;
 }
 
 .img-thumbnail{
@@ -545,4 +585,15 @@ body.loading .signin-container {
 
 input.upload-file {
     display: none;
+}
+
+.user-info .username:hover{
+    cursor: pointer;
+    background: var(--card-bg);
+}
+
+.profile-container{
+    width: 80% !important;
+    margin: auto;
+    overflow: hidden;
 }

@@ -38,15 +38,19 @@ function handleThemeChange() {
 }
 
 function initializeTheme() {
-    var theme = getCookie('theme');
+    let theme = getCookie('theme');
+    let theme_byID =  document.getElementById('theme').value;
+
+    if(!theme_byID) return
+
     if (theme === '☀️') {
-        document.getElementById('theme').value = '☀️';
+        theme_byID = '☀️';
     } else if (theme === '🌑') {
-        document.getElementById('theme').value = '🌑';
+        theme_byID = '🌑';
     }
 }
 
 window.addEventListener('load', function () {
     initializeTheme();
-    document.getElementById('theme').addEventListener('change', handleThemeChange);
+    document.getElementById('theme')?.addEventListener('change', handleThemeChange);
 });

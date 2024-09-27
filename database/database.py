@@ -37,7 +37,7 @@ def execute_query_single(query, **params):
     """
     with engine.connect() as con:
         sql = text(query)
-        res = con.execute(sql, **params)
+        res = con.execute(sql, params)
         row = res.fetchone()
         if row:
             column_names = [name.lower() for name in res.keys()]
@@ -45,7 +45,6 @@ def execute_query_single(query, **params):
             return result
         else:
             return None
-
 
 def get_all_data(table_name):
     """
@@ -61,72 +60,121 @@ def get_all_data(table_name):
     return execute_query(query)
 
 
-class User:
+class User(UserMixin):
     def __init__(self, user_data):
         self.id = user_data['id']
         self.username = user_data['username']
         self.password = user_data['password']
-        self.is_active = True
         self.firstname = user_data.get('firstname')
         self.lastname = user_data.get('lastname')
         self.doctor_type = user_data.get('doctor_type')
-        
+        self.email = user_data.get('email')
+        self._is_active = True  # Default to True
+
     @staticmethod
-    def get(self, user_id):
-        user_data = self.get_doctor_user_by_id(user_id)
+    def get(user_id):
+        """
+        Retrieve a User object by its user ID.
+        """
+        user_data = User.get_doctor_user_by_id(user_id)
         return User(user_data) if user_data else None
 
     @staticmethod
-    def get_by_username(self, username):
-        user_data = self.get_doctor_user_by_username(username)
+    def get_by_username(username):
+        """
+        Retrieve a User object by its username.
+        """
+        user_data = User.get_doctor_user_by_username(username)
         return User(user_data) if user_data else None
 
+    def get_id(self):
+        """
+        Return the unique ID of the user.
+        This method is required by Flask-Login.
+        """
+        return str(self.id)
+
+    @property
+    def is_authenticated(self):
+        """
+        Check if the user is authenticated.
+        This method is required by Flask-Login.
+        """
+        return True
+
+    @property
+    def is_active(self):
+        """
+        Check if the user is active.
+        This method is required by Flask-Login.
+        """
+        return self._is_active 
+
+    @staticmethod
     def get_doctor_user_by_id(doctor_id):
         """
-        Retrieve a doctor user by id.
+        Retrieve a doctor user by their ID.
 
         Args:
-            doctor_id: or user_id
+            doctor_id: The ID of the doctor.
 
         Returns:
-            obj: The doctor user object.
+            A dictionary representing the doctor user object.
         """
         if doctor_id is None:
             return None
-        return execute_query_single(f"SELECT * FROM DoctorsUsers du INNER JOIN Doctors AS doc ON doc.id = '{doctor_id}'"
-                                    f" WHERE du.DoctorID = '{doctor_id}'")
+        return execute_query_single(
+            "SELECT * FROM DoctorsUsers du INNER JOIN Doctors AS doc ON doc.id = :doctor_id WHERE du.DoctorID = :doctor_id",
+            doctor_id=doctor_id  
+        )
 
+    @staticmethod
     def get_doctor_user_by_username(username):
         """
         Retrieve a doctor user by username.
+
         Args:
-            username: username
+            username: The username of the doctor.
+
         Returns:
-            obj: The doctor user object.
+            A dictionary representing the doctor user object.
         """
         if username is None:
             return None
-        return execute_query_single(f"SELECT * FROM DoctorsUsers du INNER JOIN Doctors AS doc ON "
-                                    f" du.DoctorID = doc.id WHERE du.Username = '{username}'")
+        return execute_query_single(
+            "SELECT * FROM DoctorsUsers du INNER JOIN Doctors AS doc ON du.DoctorID = doc.id WHERE du.Username = :username",
+            username=username  
+        )
 
+    @staticmethod
     def get_patients_by_doctor_id(doctor_id):
         """
-        Get a doctor's patients.
+        Retrieve a list of patients for a specific doctor by their ID.
+
+        Args:
+            doctor_id: The ID of the doctor.
 
         Returns:
-            list: A list of patient objects.
+            A list of patient objects.
         """
         if doctor_id is None:
             return None
-        return execute_query(f"SELECT * FROM Patients INNER JOIN DoctorsPatients "
-                                 f"ON Patients.id = DoctorsPatients.PatientID "
-                                 f"WHERE DoctorsPatients.DoctorID = '{doctor_id}'")
+        return execute_query(
+            "SELECT * FROM Patients INNER JOIN DoctorsPatients ON Patients.id = DoctorsPatients.PatientID "
+            "WHERE DoctorsPatients.DoctorID = :doctor_id",
+            params={'doctor_id': doctor_id}
+        )
 
+    @staticmethod
     def get_tumor_types_by_doctor_id(doctor_id):
         """
-        Get a doctor's tumor types.
+        Get a list of tumor types for a specific doctor.
+
+        Args:
+            doctor_id: The ID of the doctor.
+
         Returns:
-            list: A list of tumor types.
+            A list of tumor types with counts by category.
         """
         query = """
             SELECT
@@ -144,42 +192,69 @@ class User:
             GROUP BY
                 TTM.TumorType;
         """
-
         return execute_query(query, params={'doctor_id': doctor_id})
 
+    @staticmethod
     def get_average_age_by_tumor_type(doctor_id, doctor_type):
         """
-        Get the average age for each tumor type with a given doctor type.
+        Get the average age of patients for each tumor type, filtered by doctor type.
 
         Args:
             doctor_id (str): The ID of the doctor.
             doctor_type (str): The type of doctor ('brain' or 'lung').
 
         Returns:
-            list: A list of dictionaries containing the tumor type and its average age.
+            A list of dictionaries containing the tumor type and average age.
         """
         if doctor_id is None or doctor_type not in ['brain', 'lung']:
             return None
 
         query = """
-              SELECT
-                    TTM.TumorType,
-                    AVG(P.age) AS AverageAge
-                FROM
-                    Patients P
-                INNER JOIN
-                    DoctorsPatients DP ON P.id = DP.PatientID
-                INNER JOIN
-                    Doctors D ON DP.DoctorID = D.id
-                INNER JOIN
-                    TumorTypeMapping TTM ON lower(D.doctor_type) = lower(TTM.Category)
-                WHERE
-                    D.id = :doctor_id
-                    AND lower(D.doctor_type) = :doctor_type
-                    AND lower(TTM.Category) = :doctor_type
-    
-                GROUP BY
-                    TTM.TumorType;
+            SELECT
+                TTM.TumorType,
+                AVG(P.age) AS AverageAge
+            FROM
+                Patients P
+            INNER JOIN
+                DoctorsPatients DP ON P.id = DP.PatientID
+            INNER JOIN
+                Doctors D ON DP.DoctorID = D.id
+            INNER JOIN
+                TumorTypeMapping TTM ON lower(D.doctor_type) = lower(TTM.Category)
+            WHERE
+                D.id = :doctor_id
+                AND lower(D.doctor_type) = :doctor_type
+                AND lower(TTM.Category) = :doctor_type
+            GROUP BY
+                TTM.TumorType;
         """
-
         return execute_query(query, params={'doctor_id': doctor_id, 'doctor_type': doctor_type})
+
+    @staticmethod
+    def get_patients_by_doctor_id(doctor_id):
+        """
+        Get a list of patients for a specific doctor.
+
+        Args:
+            doctor_id: The ID of the doctor.
+
+        Returns:
+            A list of patients associated with the doctor.
+        """
+        query = """
+            SELECT 
+                P.id,
+                P.firstname,
+                P.lastname,
+                P.age,
+                P.sex,
+                P.tumor_type,
+                P.last_checkup
+            FROM 
+                Patients P
+            INNER JOIN 
+                DoctorsPatients DP ON P.id = DP.PatientID
+            WHERE 
+                DP.DoctorID = :doctor_id;
+        """
+        return execute_query(query, params={'doctor_id': doctor_id})

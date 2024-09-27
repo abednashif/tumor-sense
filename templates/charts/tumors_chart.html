@@ -7,7 +7,11 @@
     <script src="{{ url_for('static', filename='lib/jquery/jquery-3.7.1.min.js') }}"></script>
 </head>
 <body>
-<canvas class="chart" id="statistics_pie_chart" width="400" height="400"></canvas>
+
+<div class="chart-container text-center">
+    <canvas class="chart mr-4" id="statistics_pie_chart" width="400" height="400"></canvas>
+    <label class="label label-primary fst-italic mt-3">{{ "Tumor detection count by type" }}</label>
+</div>
 
 <script>
     {# Pie chart JS #}

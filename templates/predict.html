@@ -45,7 +45,7 @@
                             </label>
                             <input type="file" name="input_data" id="input_data" class="upload-file" accept="image/*"
                                    required/>
-                            <input class="btn-gradient-purple-blue predict-btn" style="margin-block: 3ch;" type="submit" value="Predict"/>
+                            <input class="btn-gradient-purple-blue predict-btn" id="predict_btn" style="margin-block: 3ch;" type="submit" value="Predict"/>
                         </form>
                     </div>
                 </div>
@@ -84,12 +84,40 @@
 
             if (!file) return;
 
-            if (file.name.length > 20) 
+            if (file.name.length > 20)
                 file.name = file.name.substring(0, 20) + '...';
 
             label.querySelector('.upload-file-name').innerText = file.name;
             label.classList.add('selected');
         });
+
+        $('#predict_btn').click(function (){
+            const fileInput = document.getElementById('input_data');
+
+            if (!fileInput.files[0]) {
+                event.preventDefault();
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Please select an image file before predicting.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                })
+            }
+        });
+
+       /* document.getElementById('predict_btn').addEventListener('submit', function (event) {
+            const fileInput = document.getElementById('input_data');
+
+            if (!fileInput.files[0]) {
+                event.preventDefault();
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Please select an image file before predicting.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                })
+            }
+        });*/
 
         let report_text = "{{ report_text }}"
         console.log("Report Text: \n\n" + report_text)
@@ -119,7 +147,7 @@
                     alert('An error occurred while exporting the PDF.');
                 });
         });
-        
+
        /* document.getElementById('send-mail').addEventListener('click', function () {
             const email = prompt("Please enter the recipient's email address:");
             if (email) {
@@ -145,7 +173,7 @@
             }
         }); */
 
-        if ({{ showPopup }}) {
+  /*      if ({{ showPopup }}) {
             let CTorMRI = {{ title }} === 'Brain' ? "MRI" : "CT"
             Swal.fire({
                 title: "{{ title }} Tumor Detection",
@@ -153,7 +181,7 @@
                 icon: "error"
             });
         }
-
+*/
     });
 
 </script>
