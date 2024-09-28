@@ -1,5 +1,7 @@
 import os
 import smtplib
+import base64
+from datetime import date
 from ast import dump
 from io import BytesIO
 from cryptography.fernet import Fernet
@@ -13,14 +15,18 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph
 from werkzeug.utils import secure_filename
+from werkzeug.security import check_password_hash, generate_password_hash
 # from gevent.pywsgi import WSGIServer
 
 from TumorSenseV1 import BrainTumor, LungTumor
 from database.database import User
 
-
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.urandom(24)
+app.config['SECRET_KEY'] = os.urandom(32)
+sKey = app.config['SECRET_KEY']
+encoded_key = base64.urlsafe_b64encode(sKey)
+fer = Fernet(encoded_key)
+
 login_manager = LoginManager(app)
 login_manager.init_app(app)
 login_manager.login_view = 'login'
@@ -61,7 +67,6 @@ brain_model = BrainTumor()
 lung_model = LungTumor()
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
-
 UPLOAD_FOLDER = os.path.join(current_directory, 'uploads')
 ENCRYPTED_FOLDER = os.path.join(current_directory, 'encrypted')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -73,15 +78,23 @@ for folder in [UPLOAD_FOLDER, ENCRYPTED_FOLDER]:
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['ENCRYPTED_FOLDER'] = ENCRYPTED_FOLDER
 
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+def verify_password(stored_password, provided_password):
+    return stored_password == provided_password
 
-key = Fernet.generate_key()
-cipher_suite = Fernet(key)
+def set_password(password):
+    return generate_password_hash(password)
 
-brain_model = BrainTumor()
-lung_model = LungTumor()
-
+def create_user_session(user):
+    user_obj = User(user)
+    login_user(user_obj)
+    session['user_id'] = int(user['id'])
+    session['displayname'] = f"{user['firstname']} {user['lastname']}"
+    session['doctor_type'] = user['doctor_type']
+    return {
+        'is_authenticated': True,
+        'displayname': session['displayname'],
+        'user_type': user['doctor_type']
+    }
 
 def load_tumorTypesCounts(doctor_id):
     global lung_detection_counter, brain_detection_counter
@@ -218,6 +231,35 @@ def send_email_with_attachment(recipient_email, filename, attachment):
         print(f"Error sending email: {str(e)}")
         raise
 
+
+def update_patient_info(patient_id, prediction, doctor_type):
+    """
+    Update patient info based on prediction and doctor type.
+
+    Args:
+        patient_id: The ID of the patient.
+        prediction: The prediction result (tumor type).
+        doctor_type: The type of doctor (lung or brain).
+
+    Returns:
+        Result of the update operation.
+    """
+    if prediction.lower() == 'normal':
+        if doctor_type.lower() == 'lung':
+            prediction = 'Normal_l'
+        elif doctor_type.lower() == 'brain':
+            prediction = 'Normal_b'
+
+    today = date.today().isoformat()
+
+    new_patient_info = {
+        'tumor_type': prediction,
+        'last_checkup': today
+    }
+
+    return User.update_patient_info_after_prediction(patient_id, new_patient_info)
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.get(user_id)
@@ -225,28 +267,27 @@ def load_user(user_id):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        data = request.get_json()
-        username = data.get('username')
-        password = data.get('password')
+        username = request.form.get('username')
+        password = request.form.get('password')
+
         user = User.get_doctor_user_by_username(username)
-        if user and user['password'] == password:
-            user_id = user['id']
-            if isinstance(user_id, str):
-                user_id = int(user_id)
 
-            user_obj = User(user)
-            login_user(user_obj)
-            session['user_id'] = user_id
-            displayname = user['firstname'] + " " + user['lastname']
-            session['displayname'] = displayname
-            session['doctor_type'] = user['doctor_type']
+        if not user:
+            return jsonify({'success': False, 'error': 'username'})
 
-            return render_template('dashboard.html', displayname=displayname, is_authenticated=True,
-                                   user_type=user['doctor_type'])
-        else:
-            return render_template('welcome.html', is_authenticated=False, message="invalid username or password")
+        if not verify_password(user['password'], password):
+            return jsonify({'success': False, 'error': 'password'})
+
+        session_info = create_user_session(user)
+        return jsonify({
+            'success': True,
+            'redirect': url_for('dashboard'),
+            'is_authenticated': session_info['is_authenticated'],
+            'displayname': session_info['displayname'],
+            'user_type': session_info['user_type']
+        })
+
     return redirect(url_for('index'))
-
 
 @app.route('/logout')
 @login_required
@@ -320,6 +361,10 @@ def predict(model_type):
     if request.method == 'POST':
         global _prediction, _prediction_title, _prediction_text
 
+        patient_id = request.form.get('patient_id')
+        patient_name = request.form.get('patient_name')
+        patient_age = request.form.get('patient_age')
+
         if 'input_data' not in request.files:
             return 'No file part'
 
@@ -330,6 +375,8 @@ def predict(model_type):
 
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
+            base_name, ext = os.path.splitext(filename)
+            filename = f"{base_name}_{patient_id}{ext}"
             user_id = str(current_user.id)
             user_upload_folder = os.path.join(app.config['UPLOAD_FOLDER'], user_id)
 
@@ -351,14 +398,21 @@ def predict(model_type):
 
                 _prediction = prediction
                 _prediction_text = report_text
+
+                if(patient_id != None and patient_name != None and patient_age != None):
+                    update_patient_info(patient_id, prediction, user_id)
+                else:
+                    print("Failed to update patient info, one or more arguments are null")
+
             except Exception as e:
-                return f"Error: {str(e)}"
+                raise ValueError("Failed to update patient info.")
+                return render_template('error.html', error=str(e))
             finally:
                 print("Finished prediction")
 
             with open(file_path, 'rb') as f:
                 plaintext = f.read()
-            encrypted_data = cipher_suite.encrypt(plaintext)
+            encrypted_data = fer.encrypt(plaintext)
 
             encrypted_folder = os.path.join(app.config['ENCRYPTED_FOLDER'], user_id)
             if not os.path.exists(encrypted_folder):
@@ -373,7 +427,7 @@ def predict(model_type):
 
             return render_template('predict.html', prediction=prediction,
                                    report_text=report_text, type=type, title=type.capitalize(), showPopup='false',
-                                   is_authenticated=True)
+                                   is_authenticated=True, patient_name=patient_name, patient_age=patient_age)
 
     return redirect(url_for('index'))
 
@@ -400,15 +454,16 @@ def view_prediction_page(model_type):
 
     load_tumorTypesCounts(user_id)
     load_average_age(user_id, doctor_type)
+    patients = User.get_patients_by_doctor_id(user_id)
 
     if model_type == 'lung':
         return render_template('predict.html', detection_counter=json.dumps(lung_detection_counter),
                                avg_age=json.dumps(lung_detection_age), type='lung',
-                               title="Lung", showPopup='false', is_authenticated=True)
+                               title="Lung", showPopup='false', is_authenticated=True, patients=patients)
     elif model_type == 'brain':
         return render_template('predict.html', detection_counter=json.dumps(brain_detection_counter),
                                avg_age=json.dumps(brain_detection_age), type='brain',
-                               title="Brain", showPopup='false', is_authenticated=True)
+                               title="Brain", showPopup='false', is_authenticated=True, patients=patients)
     else:
         return render_template('dashboard.html')
 
@@ -424,7 +479,7 @@ def decrypt_file(filename):
     with open(encrypted_file_path, 'rb') as f:
         encrypted_data = f.read()
 
-    decrypted_data = cipher_suite.decrypt(encrypted_data)
+    decrypted_data = fer.decrypt(encrypted_data)
 
     decrypted_filename = filename.replace('encrypted_', 'decrypted_')
     return send_file(

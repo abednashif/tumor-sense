@@ -16,7 +16,7 @@
 <body>
 <div class="container-fluid pt-3">
     <div class="row">
-        {#                    {% if not true %}#}
+        {#{% if not true %}#}
         {% if not prediction %}
             <div class="form-container">
                 <div class="p-2 text-center title">
@@ -27,24 +27,46 @@
                     {% include 'charts/tumors_chart.html' %}
                     {% include 'charts/age_chart.html' %}
                 </div>
+
+                <div class="patient-list-container mt-4 mb-4">
+                    <h5>Select a Patient:</h5>
+                    <div class="patient-list">
+                        {% for patient in patients %}
+                            <div class="patient-card" data-patient-id="{{ patient.id }}" data-patient-name="{{ patient.firstname + " " + patient.lastname }}" data-patient-age="{{ patient.age }}">
+                                <h6>{{ patient.firstname + " " + patient.lastname }}</h6>
+                                <p>
+                                    <span class="fw-bold">Age: </span>
+                                    <span>{{ patient.age }}</span>
+                                </p>
+                                <p>
+                                    <span class="fw-bold">Tumor Type:</span>
+                                    <span> {{ patient.tumor_type[:-2] if patient.tumor_type.endswith('_l') or patient.tumor_type.endswith('_b') else patient.tumor_type }} </span>
+                                </p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
                 <div>
                     <div class="form-container mt-5">
-                        <form method="POST" class="form-upload" action="/predict/{{ type }}"
+                        <form method="POST" class="form-upload" id="predict_form" action="/predict/{{ type }}"
                               enctype="multipart/form-data">
+                            <input type="hidden" name="patient_id" id="patient_id" value="">
+                            <input type="hidden" name="patient_name" id="patient_name" value="">
+                            <input type="hidden" name="patient_age" id="patient_age" value="">
                             <label for="input_data" class="upload-label" title="Upload an image" data-bs-toggle="tooltip"
                                    data-bs-placement="top">
-                                    <span class="upload-text">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
-                                            class="bi bi-upload" viewBox="0 0 16 16">
-                                            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"></path>
-                                            <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z"></path>
-                                        </svg>
-                                        &nbsp;&nbsp;
-                                        <span class="upload-file-name">Upload an image</span>
-                                    </span>
+                                <span class="upload-text">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
+                                         class="bi bi-upload" viewBox="0 0 16 16">
+                                        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"></path>
+                                        <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z"></path>
+                                    </svg>
+                                    &nbsp;&nbsp;
+                                    <span class="upload-file-name">Upload an image</span>
+                                </span>
                             </label>
-                            <input type="file" name="input_data" id="input_data" class="upload-file" accept="image/*"
-                                   required/>
+                            <input type="file" name="input_data" id="input_data" class="upload-file" accept="image/*" required/>
                             <input class="btn-gradient-purple-blue predict-btn" id="predict_btn" style="margin-block: 3ch;" type="submit" value="Predict"/>
                         </form>
                     </div>
@@ -59,14 +81,23 @@
                     <div class="p-2 text-center title">
                         {{ title }} Tumor Detection
                     </div>
+                    <div class="patient-container">
+                        <div class="patient-card-predict">
+                            <h6>{{ patient_name }}</h6>
+                            <p>
+                                <span class="fw-bold">Age: </span>
+                                <span>{{ patient_age }}</span>
+                            </p>
+                        </div>
+                    </div>
                     <div class="result-container">
-                        <h4 class="p-3">
-                            {{ prediction }}
+                        <div class="d-flex justify-content-between align-items-center p-3">
+                            <div class="prediction-result">{{ prediction }}</div>
                             <span class="icon-container">
                                 <i id="export-pdf" class="bi bi-file-pdf" title="Export to PDF"></i>
                                 <!-- <i id="send-mail" class="bi bi-envelope" title="Send Mail"></i> -->
                             </span>
-                        </h4>
+                        </div>
                         <div class="report" id="predict_report_text"></div>
                     </div>
                 {% endif %}
@@ -78,112 +109,87 @@
 <script defer>
     document.addEventListener('DOMContentLoaded', (event) => {
 
-        document.getElementById('input_data')?.addEventListener('change', function () {
-            let file = this.files[0];
-            let label = document.querySelector('.upload-label');
+    document.getElementById('input_data')?.addEventListener('change', function () {
+        let file = this.files[0];
+        let label = document.querySelector('.upload-label');
 
-            if (!file) return;
+        if (!file) return;
 
-            if (file.name.length > 20)
-                file.name = file.name.substring(0, 20) + '...';
+        if (file.name.length > 20)
+            file.name = file.name.substring(0, 20) + '...';
 
-            label.querySelector('.upload-file-name').innerText = file.name;
-            label.classList.add('selected');
-        });
-
-        $('#predict_btn').click(function (){
-            const fileInput = document.getElementById('input_data');
-
-            if (!fileInput.files[0]) {
-                event.preventDefault();
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Please select an image file before predicting.',
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                })
-            }
-        });
-
-       /* document.getElementById('predict_btn').addEventListener('submit', function (event) {
-            const fileInput = document.getElementById('input_data');
-
-            if (!fileInput.files[0]) {
-                event.preventDefault();
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Please select an image file before predicting.',
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                })
-            }
-        });*/
-
-        let report_text = "{{ report_text }}"
-        console.log("Report Text: \n\n" + report_text)
-
-        let isReportElementRendered = $('#predict_report_text').length !== 0
-        if (!isReportElementRendered) {
-            return
-        }
-
-        TypeWriter(report_text, 'predict_report_text', 15)
-
-        document.getElementById('export-pdf').addEventListener('click', function () {
-            fetch('/export-pdf', { method: 'POST' })
-                .then(response => response.blob())
-                .then(blob => {
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.style.display = 'none';
-                    a.href = url;
-                    a.download = 'prediction.pdf';
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while exporting the PDF.');
-                });
-        });
-
-       /* document.getElementById('send-mail').addEventListener('click', function () {
-            const email = prompt("Please enter the recipient's email address:");
-            if (email) {
-                fetch('/send-email', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email: email }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Email sent successfully!');
-                    } else {
-                        alert('Failed to send email: ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while sending the email.');
-                });
-            }
-        }); */
-
-  /*      if ({{ showPopup }}) {
-            let CTorMRI = {{ title }} === 'Brain' ? "MRI" : "CT"
-            Swal.fire({
-                title: "{{ title }} Tumor Detection",
-                text: `Please upload a valid ${CTorMRI} image.`,
-                icon: "error"
-            });
-        }
-*/
+        label.querySelector('.upload-file-name').innerText = file.name;
+        label.classList.add('selected');
     });
 
+    let selectedPatientId = null;
+    document.querySelectorAll('.patient-card').forEach(card => {
+        card.addEventListener('click', function() {
+            document.querySelectorAll('.patient-card').forEach(c => c.classList.remove('selected'));
+            this.classList.add('selected');
+            selectedPatientId = this.getAttribute('data-patient-id');
+            selectedPatientName = this.getAttribute('data-patient-name');
+            selectedPatientAge = this.getAttribute('data-patient-age');
+            document.getElementById('patient_id').value = selectedPatientId;
+            document.getElementById('patient_name').value = selectedPatientName;
+            document.getElementById('patient_age').value = selectedPatientAge;
+        });
+    });
+
+    $('#predict_btn').click(function (event) {
+        const fileInput = document.getElementById('input_data');
+        const selectedPatientId = document.getElementById('patient_id').value;
+
+        if (!fileInput.files[0]) {
+            event.preventDefault();
+            Swal.fire({
+                title: 'Error!',
+                text: 'Please select an image file before predicting.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+
+        if (!selectedPatientId) {
+            event.preventDefault();
+            Swal.fire({
+                title: 'Error!',
+                text: 'Please select a patient before predicting.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+
+    let report_text = "{{ report_text }}";
+    console.log("Report Text: \n\n" + report_text);
+
+    let isReportElementRendered = $('#predict_report_text').length !== 0;
+    if (!isReportElementRendered) {
+        return;
+    }
+
+    TypeWriter(report_text, 'predict_report_text', 15);
+
+    document.getElementById('export-pdf').addEventListener('click', function () {
+        fetch('/export-pdf', { method: 'POST' })
+            .then(response => response.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'prediction.pdf';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while exporting the PDF.');
+            });
+    });
+});
 </script>
 </body>
 </html>

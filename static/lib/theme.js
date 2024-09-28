@@ -39,7 +39,7 @@ function handleThemeChange() {
 
 function initializeTheme() {
     let theme = getCookie('theme');
-    let theme_byID =  document.getElementById('theme').value;
+    let theme_byID =  document.getElementById('theme')?.value;
 
     if(!theme_byID) return
 

@@ -22,7 +22,11 @@ def execute_query(query, params=None):
             params = {}
         sql = text(query)
         res = con.execute(sql, params)
-        return [row for row in res]
+
+        if res.returns_rows:
+            return [row for row in res]
+        else:
+            return res.rowcount
 
 def execute_query_single(query, **params):
     """
@@ -220,11 +224,11 @@ class User(UserMixin):
             INNER JOIN
                 Doctors D ON DP.DoctorID = D.id
             INNER JOIN
-                TumorTypeMapping TTM ON lower(D.doctor_type) = lower(TTM.Category)
+                TumorTypeMapping TTM ON P.tumor_type = TTM.TumorType
             WHERE
                 D.id = :doctor_id
-                AND lower(D.doctor_type) = :doctor_type
-                AND lower(TTM.Category) = :doctor_type
+                AND lower(D.doctor_type) = lower(:doctor_type)
+                AND lower(TTM.Category) = lower(:doctor_type)
             GROUP BY
                 TTM.TumorType;
         """
@@ -258,3 +262,33 @@ class User(UserMixin):
                 DP.DoctorID = :doctor_id;
         """
         return execute_query(query, params={'doctor_id': doctor_id})
+
+    @staticmethod
+    def update_patient_info_after_prediction(patient_id, new_patient_info):
+        """
+        Update patient information after a prediction.
+
+        Args:
+            patient_id: The ID of the patient.
+            new_patient_info: A dictionary containing updated tumor_type and last_checkup date.
+
+        Returns:
+            A boolean indicating success or failure of the update operation.
+        """
+        if not new_patient_info or patient_id is None:
+            return False
+
+        query = """
+            UPDATE Patients
+            SET tumor_type = :tumor_type,
+                last_checkup = :last_checkup
+            WHERE id = :patient_id;
+        """
+
+        result = execute_query(query, params={
+            'tumor_type': new_patient_info['tumor_type'],
+            'last_checkup': new_patient_info['last_checkup'],
+            'patient_id': patient_id
+        })
+
+        return result > 0

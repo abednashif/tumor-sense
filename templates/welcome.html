@@ -562,7 +562,7 @@
 </svg>
             </div>
         </div>
-        <div class="ccol-lg-4 col-md-5 col-sm-4 signin-container">
+        <div class="col-lg-4 col-md-5 col-sm-4 signin-container">
             <form class="auth-form" action="/login" method="post" id="login-form">
                 <h2>Sign In</h2>
                 <div class="form-floating mb-3">
@@ -613,20 +613,34 @@
 <script type="text/javascript" src="{{ url_for('static', filename='lib/appleid.auth.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='lib/google.js') }}"></script>
 <script>
-    document.getElementById('submit-btn').addEventListener('click', function (event) {
-        var loginForm = document.getElementById('login-form');
-        submitLoginForm(loginForm, '/login');
-    });
+    document.getElementById('login-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        var form = this;
+        var formData = new FormData(form);
 
-    {% if message %}
-      $(document).onload(function (){
-        Swal.fire({
-            title: "Invalid details",
-            text: "check login credintials",
-            icon: "error"
-          })
-      });
-    {% endif %}
+        fetch('/login', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = data.redirect;
+            } else {
+                if (data.error === 'username') {
+                    document.getElementById('username').classList.add('error-input');
+                    setTimeout(() => {
+                        document.getElementById('username').classList.remove('error-input');
+                    }, 500);
+                } else if (data.error === 'password') {
+                    document.getElementById('password').classList.add('error-input');
+                    setTimeout(() => {
+                        document.getElementById('password').classList.remove('error-input');
+                    }, 500);
+                }
+            }
+        });
+    });
 </script>
 </body>
 </html>

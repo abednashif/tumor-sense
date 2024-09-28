@@ -129,6 +129,15 @@ td{
     color: var(--text);
 }
 
+h5,
+h6:not(.patient-card h6),
+.prediction-result{
+    background-image: linear-gradient(to right, #8383dd 0%, #1CB5E0 51%, #9b58b8 100%) !important;
+    color: transparent !important;
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
 label {
     color: var(--text);
 }
@@ -356,10 +365,11 @@ input {
 
 .upload-text {
     margin-top: 6px;
-    border: 1px solid #363636;
+    border: 1px solid var(--text);
     border-radius: 4px;
     padding: 1ch;
-    background: #4d4d4d;
+    background: var(--text);
+    color: var(--base);
 }
 
 .upload-label svg:hover {
@@ -444,6 +454,11 @@ border: 1px solid darkslategray;
   color: #000;
 }
 */
+
+.prediction-result{
+    font-size: 25px;
+    font-weight: 600;
+}
 
 .icon-container {
     float: right;
@@ -596,4 +611,76 @@ input.upload-file {
     width: 80% !important;
     margin: auto;
     overflow: hidden;
+}
+
+.patient-container{
+    margin-left: 10%;
+    margin-bottom: 2%;
+}
+
+.patient-card-predict{
+    flex: 0 0 auto;
+    width: 200px;
+    padding: 10px;
+    margin-right: 10px;
+    border: 1px solid darkslategray;
+    border-radius: calc(var(--main-border-radius) - 6%);
+    transition: background-color 0.3s;
+    word-break: break-word;
+    background: var(--black);
+}
+
+.patient-list-container {
+    width: 80%;
+    margin: 0 auto;
+}
+.patient-list {
+    display: flex;
+    overflow-x: auto;
+    padding: 10px 0;
+}
+.patient-card {
+    flex: 0 0 auto;
+    width: 200px;
+    padding: 10px;
+    margin-right: 10px;
+    border: 1px solid var(--text);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    word-break: break-word;
+}
+
+.patient-card:hover{
+    background-image: linear-gradient(to right, #9c9cff5e 0%, #1b7fe76b 51%, #9a59ab82 100%)
+}
+
+.patient-card.selected {
+    background-image: linear-gradient(to right, #9c9cff5e 0%, #1b7fe76b 51%, #9a59ab82 100%)
+}
+.patient-card h6 {
+    margin-bottom: 5px;
+    color: var(--text);
+    font-weight: 600;
+}
+.patient-card p {
+    margin: 0;
+    font-size: 0.9em;
+    color: var(--text);
+}
+
+
+/* Error  handling  CSS */
+
+@keyframes shakeError {
+    0% { border-color: #ff0000; }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); border-color: #ff0000; }
+}
+
+.error-input {
+    animation: shakeError 0.5s;
+    border: 2px solid #ff0000;
 }
