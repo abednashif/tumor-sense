@@ -108,13 +108,13 @@ class LungTumor:
         return result, report_text
 
 
-    def checkIfCT(self, _image):
-        images_labels = ["Not a CT image!", "CT"]
-        threshold = 0.5
-
-        image = img_to_array(_image)
-
-        image = np.expand_dims(image, axis=0)
-        res = self.detect_ct.predict(image)
-
-        return images_labels[0] if res >= threshold else class_labels[1]
+    # def checkIfCT(self, _image):
+    #     images_labels = ["Not a CT image!", "CT"]
+    #     threshold = 0.5
+    #
+    #     image = img_to_array(_image)
+    #
+    #     image = np.expand_dims(image, axis=0)
+    #     res = self.detect_ct.predict(image)
+    #
+    #     return images_labels[0] if res >= threshold else class_labels[1]
