@@ -23,6 +23,8 @@
 
     --export-icons-color: #70afff;
 
+    --patients-list-border-color: #aaaaaa;
+
     /*--main-border-radius: 4px;*/
     --main-border-radius: 7%;
 
@@ -620,7 +622,7 @@ input.upload-file {
 
 .patient-card-predict{
     flex: 0 0 auto;
-    width: 200px;
+    width: 250px;
     padding: 10px;
     margin-right: 10px;
     border: 1px solid darkslategray;
@@ -637,15 +639,22 @@ input.upload-file {
 .patient-list {
     display: flex;
     overflow-x: auto;
-    padding: 10px 0;
+    padding: 40px 130px;
+    border-radius: 50%;
 }
+
+.patient-list-profile{
+    display: flex;
+    overflow-x: auto;
+}
+
 .patient-card {
     flex: 0 0 auto;
-    width: 200px;
+    width: 220px;
     padding: 10px;
     margin-right: 10px;
     border: 1px solid var(--text);
-    border-radius: 5px;
+    border-radius: 15px;
     cursor: pointer;
     transition: background-color 0.3s;
     word-break: break-word;
@@ -683,4 +692,22 @@ input.upload-file {
 .error-input {
     animation: shakeError 0.5s;
     border: 2px solid #ff0000;
+}
+
+
+.disable-brothers.placeholder{
+    display: inline-block;
+    min-height: 1em;
+    vertical-align: middle;
+    cursor: wait;
+    background-color: currentcolor;
+    opacity: .3 !important;
+    position: absolute;
+    width: 120px;
+    height: 50px;
+    z-index: 99;
+}
+
+.disable-brothers{
+
 }

@@ -295,7 +295,7 @@ def logout():
     logout_user()
     session.clear()
     flash('You have been logged out.', 'success')
-    return redirect(url_for('index'))
+    return redirect(url_for('welcome'))
 
 @app.route('/')
 def index():
@@ -364,6 +364,7 @@ def predict(model_type):
         patient_id = request.form.get('patient_id')
         patient_name = request.form.get('patient_name')
         patient_age = request.form.get('patient_age')
+        patient_checkup = request.form.get('patient_checkup')
 
         if 'input_data' not in request.files:
             return 'No file part'
@@ -427,7 +428,7 @@ def predict(model_type):
 
             return render_template('predict.html', prediction=prediction,
                                    report_text=report_text, type=type, title=type.capitalize(), showPopup='false',
-                                   is_authenticated=True, patient_name=patient_name, patient_age=patient_age)
+                                   is_authenticated=True, patient_name=patient_name, patient_age=patient_age, patient_checkup=patient_checkup)
 
     return redirect(url_for('index'))
 

@@ -17,7 +17,7 @@ def execute_query(query, params=None):
     Returns:
         list: A list containing the fetched data.
     """
-    with engine.connect() as con:
+    with engine.begin() as con:
         if params is None:
             params = {}
         sql = text(query)
@@ -39,7 +39,7 @@ def execute_query_single(query, **params):
     Returns:
         dict: A dictionary containing the fetched data.
     """
-    with engine.connect() as con:
+    with engine.begin() as con:
         sql = text(query)
         res = con.execute(sql, params)
         row = res.fetchone()
@@ -276,6 +276,7 @@ class User(UserMixin):
             A boolean indicating success or failure of the update operation.
         """
         if not new_patient_info or patient_id is None:
+            print("Invalid input: new_patient_info or patient_id is None")
             return False
 
         query = """
@@ -285,10 +286,14 @@ class User(UserMixin):
             WHERE id = :patient_id;
         """
 
-        result = execute_query(query, params={
-            'tumor_type': new_patient_info['tumor_type'],
-            'last_checkup': new_patient_info['last_checkup'],
-            'patient_id': patient_id
-        })
-
-        return result > 0
+        try:
+            result = execute_query(query, params={
+                'tumor_type': new_patient_info['tumor_type'],
+                'last_checkup': new_patient_info['last_checkup'],
+                'patient_id': patient_id
+            })
+            print(f"Update result: {result} rows affected")
+            return result > 0
+        except Exception as e:
+            print(f"Error updating patient info: {e}")
+            return False

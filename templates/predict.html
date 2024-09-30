@@ -28,19 +28,24 @@
                     {% include 'charts/age_chart.html' %}
                 </div>
 
-                <div class="patient-list-container mt-4 mb-4">
+                <div class="patient-list-container mt-5 mb-4">
                     <h5>Select a Patient:</h5>
                     <div class="patient-list">
                         {% for patient in patients %}
-                            <div class="patient-card" data-patient-id="{{ patient.id }}" data-patient-name="{{ patient.firstname + " " + patient.lastname }}" data-patient-age="{{ patient.age }}">
+                            <div class="patient-card" data-patient-id="{{ patient.id }}"
+                                 data-patient-name="{{ patient.firstname + " " + patient.lastname | safe}}" data-patient-age="{{ patient.age | safe}}" data-patient-checkup="{{ patient.last_checkup | safe }}">
                                 <h6>{{ patient.firstname + " " + patient.lastname }}</h6>
                                 <p>
                                     <span class="fw-bold">Age: </span>
-                                    <span>{{ patient.age }}</span>
+                                    <span>{{ patient.age | safe}}</span>
                                 </p>
                                 <p>
                                     <span class="fw-bold">Tumor Type:</span>
                                     <span> {{ patient.tumor_type[:-2] if patient.tumor_type.endswith('_l') or patient.tumor_type.endswith('_b') else patient.tumor_type }} </span>
+                                </p>
+                                <p>
+                                    <span class="fw-bold">Last Checkup:</span>
+                                    <span> {{ patient.last_checkup | safe}} </span>
                                 </p>
                             </div>
                         {% endfor %}
@@ -54,6 +59,7 @@
                             <input type="hidden" name="patient_id" id="patient_id" value="">
                             <input type="hidden" name="patient_name" id="patient_name" value="">
                             <input type="hidden" name="patient_age" id="patient_age" value="">
+                            <input type="hidden" name="patient_checkup" id="patient_checkup" value="">
                             <label for="input_data" class="upload-label" title="Upload an image" data-bs-toggle="tooltip"
                                    data-bs-placement="top">
                                 <span class="upload-text">
@@ -83,10 +89,14 @@
                     </div>
                     <div class="patient-container">
                         <div class="patient-card-predict">
-                            <h6>{{ patient_name }}</h6>
+                            <h6>{{ patient_name | safe}}</h6>
                             <p>
                                 <span class="fw-bold">Age: </span>
-                                <span>{{ patient_age }}</span>
+                                <span>{{ patient_age | safe}}</span>
+                            </p>
+                            <p>
+                                <span class="fw-bold">Last Checkup: </span>
+                                <span>{{ patient_checkup | safe }}</span>
                             </p>
                         </div>
                     </div>
@@ -130,9 +140,11 @@
             selectedPatientId = this.getAttribute('data-patient-id');
             selectedPatientName = this.getAttribute('data-patient-name');
             selectedPatientAge = this.getAttribute('data-patient-age');
+            selectedPatientCheckup = this.getAttribute('data-patient-checkup');
             document.getElementById('patient_id').value = selectedPatientId;
             document.getElementById('patient_name').value = selectedPatientName;
             document.getElementById('patient_age').value = selectedPatientAge;
+            document.getElementById('patient_checkup').value = selectedPatientCheckup;
         });
     });
 
