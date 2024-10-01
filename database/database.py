@@ -297,3 +297,25 @@ class User(UserMixin):
         except Exception as e:
             print(f"Error updating patient info: {e}")
             return False
+
+    @staticmethod
+    def patients_exceeded_30_days_count(_user_id):
+        """
+        Get the number of patients exceeded 30 days from last checkup.
+        Returns:
+        Number of patients.
+        """
+
+        if _user_id is None:
+            print("Invalid input: _user_id is None")
+            return False
+
+        query = """
+                SELECT COUNT(*)
+                FROM Patients p
+                JOIN DoctorsPatients dp ON p.id = dp.PatientID
+                WHERE dp.DoctorID = :_user_id
+                AND DATE('now') > DATE(p.last_checkup, '+30 days');
+            """
+        return execute_query(query,params={ '_user_id':_user_id})[0][0]
+

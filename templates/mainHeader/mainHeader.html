@@ -45,8 +45,7 @@
         <div class="right-content d-flex flex-row align-items-end">
             <a class="reservations-icon">
                 <i class="bi bi-bell position-relative"></i>
-                <span class="position-absolute translate-middle badge rounded-pill bg-danger">
-                    99+
+                <span class="position-absolute translate-middle badge rounded-pill bg-danger" id="header_patients_count_display">
                     <span class="visually-hidden">unread messages</span>
                 </span>
             </a>
@@ -77,6 +76,14 @@
             </div>
         </div>
     </div>
+    <script defer>
+        console.log("Patients Due Count: " ,"{{ session['patients_count'] }}");
+        let patient_count = "{{ session['patients_count'] | safe }}";
+        let header_patient_count = document.getElementById('header_patients_count_display')
+        if(header_patient_count !== null){
+            header_patient_count.textContent = patient_count
+        }
+    </script>
 {% endif %}
 {% include "mainHeader/loader.html" %}
 </body>
