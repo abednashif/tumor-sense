@@ -64,9 +64,6 @@ brain_detection_age = {
     'Adenoma': 0
 }
 
-brain_model = BrainTumor()
-lung_model = LungTumor()
-
 current_directory = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = os.path.join(current_directory, 'uploads')
 ENCRYPTED_FOLDER = os.path.join(current_directory, 'encrypted')
@@ -465,12 +462,15 @@ def predict(model_type):
             file_path = os.path.join(user_upload_folder, filename)
             file.save(file_path)
 
+            brain_model = BrainTumor()
+            lung_model = LungTumor()
+
             try:
                 if type == 'lung':
                     prediction, report_text = lung_model.predict(file_path)
                     _prediction_title = "Lung Tumor Detection"
                 elif type == 'brain':
-                    # prediction, report_text = brain_model.predict(file_path)
+                    prediction, report_text = brain_model.predict(file_path)
                     prediction = "Meningioma"
                     report_text = "Meningiomas are benign (non-cancerous) tumors that arise from the meninges, the protective membranes surrounding the brain and spinal cord. They are the second most common type of primary brain tumor after gliomas.//Symptoms: Symptoms can vary depending on the location and size of the tumor. They may include headaches, seizures, vision problems, hearing loss, and weakness.//Treatment: Treatment options include observation (for slow-growing tumors), surgery, and radiation therapy. The specific approach depends on the size, location, and growth rate of the meningioma.//Note: While most meningiomas are benign, a small percentage can be atypical or malignant (cancerous). These require more aggressive treatment.//"
                     _prediction_title = "Brain Tumor Detection"
@@ -570,7 +570,7 @@ def decrypt_file(filename):
 
 if __name__ == '__main__':
     # app.run(debug=True, port=8002)
-    # app.run(host='0.0.0.0', port=8001)
+    app.run(host='0.0.0.0', port=8001)
     # production
-    http_server = WSGIServer(('', 8001), app)
-    http_server.serve_forever()
+    # http_server = WSGIServer(('', 8001), app)
+    # http_server.serve_forever()
