@@ -164,8 +164,8 @@ class User(UserMixin):
         if doctor_id is None:
             return None
         return execute_query(
-            "SELECT * FROM Patients INNER JOIN DoctorsPatients ON Patients.id = DoctorsPatients.PatientID "
-            "WHERE DoctorsPatients.DoctorID = :doctor_id",
+            "SELECT * FROM Patients AS P INNER JOIN DoctorsPatients as DP ON p.id = dp.PatientID "
+            "WHERE dp.DoctorID = :doctor_id ORDER BY CASE WHEN dp.last_checkup IS NULL THEN 1 ELSE 0 END, dp.last_checkup ASC",
             params={'doctor_id': doctor_id}
         )
 

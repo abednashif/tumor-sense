@@ -11,9 +11,10 @@ from email.mime.multipart import MIMEMultipart
 from flask import Flask, render_template, request, send_file, redirect, flash, url_for, json, jsonify, session
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 from reportlab.lib import colors
+from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
-from reportlab.lib.styles import ParagraphStyle
-from reportlab.platypus import SimpleDocTemplate, Paragraph
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash, generate_password_hash
 # from gevent.pywsgi import WSGIServer
@@ -63,8 +64,8 @@ brain_detection_age = {
     'Adenoma': 0
 }
 
-# brain_model = BrainTumor()
-# lung_model = LungTumor()
+brain_model = BrainTumor()
+lung_model = LungTumor()
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = os.path.join(current_directory, 'uploads')
@@ -157,15 +158,39 @@ def load_average_age(doctor_id, doctor_type):
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def generate_pdf(prediction, prediction_description, title):
+def generate_pdf(prediction, prediction_description, title, patient_name, patient_age, tumor_type, last_checkup):
     buffer = BytesIO()
-    pdf = SimpleDocTemplate(buffer, pagesize=letter)
+    pdf = SimpleDocTemplate(buffer, pagesize=letter, topMargin=0.5*inch, leftMargin=0.5*inch, rightMargin=0.5*inch)
+
+    styles = getSampleStyleSheet()
+
+    branding_style = ParagraphStyle(
+        name='BrandingStyle',
+        fontSize=40,
+        textColor=colors.purple,
+        spaceAfter=20
+    )
 
     title_style = ParagraphStyle(
         name='TitleStyle',
         fontSize=20,
         textColor=colors.black,
-        spaceAfter=20
+        spaceAfter=20,
+        alignment=1
+    )
+
+    patient_info_style = ParagraphStyle(
+        name='PatientInfoStyle',
+        fontSize=12,
+        textColor=colors.black,
+        spaceAfter=10
+    )
+
+    normal_style = ParagraphStyle(
+        name='NormalStyle',
+        fontSize=10,
+        textColor=colors.black,
+        spaceAfter=6
     )
 
     notice_style = ParagraphStyle(
@@ -177,28 +202,50 @@ def generate_pdf(prediction, prediction_description, title):
 
     content = []
 
+    branding_text = "TumorSense"
+    branding_paragraph = Paragraph(branding_text, branding_style)
+    content.append(branding_paragraph)
+    content.append(Spacer(1, 0.25*inch))
+
     title_text = f'<b>{title}</b>'
     title_paragraph = Paragraph(title_text, title_style)
     content.append(title_paragraph)
+    content.append(Spacer(1, 0.25*inch))
 
-    prediction_text = f"<br/><br/><b>Prediction:</b><br/>{prediction}"
-    prediction_paragraph = Paragraph(prediction_text, style=ParagraphStyle(name='Normal'))
+    today = date.today().strftime("%Y-%m-%d")
+    patient_info = \
+        f"""
+            <b>Patient Name:</b> {patient_name}<br/>
+            <b>Age:</b> {patient_age}<br/>
+            <b>Current Tumor Type:</b> {tumor_type}<br/>
+            <b>Last Checkup Date:</b> {last_checkup}<br/>
+            <b>Today's Date:</b> {today}
+        """
+    patient_info_paragraph = Paragraph(patient_info, patient_info_style)
+    content.append(patient_info_paragraph)
+    content.append(Spacer(1, 0.25*inch))
+
+    prediction_text = f"<b>Prediction:</b><br/>{prediction}"
+    prediction_paragraph = Paragraph(prediction_text, patient_info_style)
     content.append(prediction_paragraph)
+    content.append(Spacer(1, 0.1*inch))
 
-    prediction_description_text = f"<br/><br/>{prediction_description}"
-    prediction_description_text = prediction_description_text.replace('//', '<br/>')
+    content.append(Paragraph("Explanation:", normal_style))
+    for paragraph in prediction_description.split('//'):
+        if paragraph.strip():
+            content.append(Paragraph(paragraph.strip(), normal_style))
 
-    content.append(Paragraph(prediction_description_text, style=ParagraphStyle(name='Normal')))
 
-    notice_text = "<br/><br/><br/><i>Note: This prediction is AI-generated and may be inaccurate.</i>"
-    notice_paragraph = Paragraph(notice_text, style=notice_style)
+
+    content.append(Spacer(1, 0.5*inch))
+    notice_text = "<i>Note: This prediction is AI-generated and may be inaccurate.</i>"
+    notice_paragraph = Paragraph(notice_text, notice_style)
     content.append(notice_paragraph)
 
     pdf.build(content)
 
     buffer.seek(0)
     return buffer
-
 
 def send_email_with_attachment(recipient_email, filename, attachment):
     smtp_server = 'smtp.gmail.com'
@@ -230,6 +277,18 @@ def send_email_with_attachment(recipient_email, filename, attachment):
     except Exception as e:
         print(f"Error sending email: {str(e)}")
         raise
+
+
+def get_decrypted_file(encrypted_file_path):
+    if not os.path.exists(encrypted_file_path):
+        return "File not found", 404
+
+    with open(encrypted_file_path, 'rb') as f:
+        encrypted_data = f.read()
+
+    decrypted_data = fer.decrypt(encrypted_data)
+
+    return decrypted_data
 
 
 def update_patient_info(patient_id, prediction, doctor_type):
@@ -330,7 +389,21 @@ def dashboard():
 def export_to_pdf():
     if _prediction:
         pdf_filename = 'prediction.pdf'
-        pdf_buffer = generate_pdf(_prediction, _prediction_text, _prediction_title)
+
+        patient_name = session.get('patient_name')
+        patient_age = session.get('patient_age')
+        tumor_type = session.get('tumor_type')
+        last_checkup = session.get('patient_checkup')
+
+        pdf_buffer = generate_pdf(
+            _prediction,
+            _prediction_text,
+            _prediction_title,
+            patient_name,
+            patient_age,
+            tumor_type,
+            last_checkup
+        )
 
         return send_file(
             pdf_buffer,
@@ -407,6 +480,10 @@ def predict(model_type):
                 _prediction = prediction
                 _prediction_text = report_text
 
+                session['patient_name'] = patient_name
+                session['patient_age'] = patient_age
+                session['patient_checkup'] = patient_checkup
+
                 if(patient_id != None and patient_name != None and patient_age != None):
                     update_patient_info(patient_id, prediction, type)
                 else:
@@ -475,19 +552,12 @@ def view_prediction_page(model_type):
     else:
         return render_template('dashboard.html')
 
-
-
 @app.route('/decrypt/<filename>', methods=['GET'])
 @login_required
 def decrypt_file(filename):
     encrypted_file_path = os.path.join(app.config['ENCRYPTED_FOLDER'], filename)
-    if not os.path.exists(encrypted_file_path):
-        return "File not found", 404
 
-    with open(encrypted_file_path, 'rb') as f:
-        encrypted_data = f.read()
-
-    decrypted_data = fer.decrypt(encrypted_data)
+    decrypted_data = get_decrypted_file(encrypted_data)
 
     decrypted_filename = filename.replace('encrypted_', 'decrypted_')
     return send_file(
