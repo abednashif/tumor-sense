@@ -570,7 +570,7 @@ def decrypt_file(filename):
 
 if __name__ == '__main__':
     # app.run(debug=True, port=8002)
-    app.run(host='0.0.0.0', port=8001)
+    # app.run(host='0.0.0.0', port=8001)
     # production
-    # http_server = WSGIServer(('', 8001), app)
-    # http_server.serve_forever()
+    http_server = WSGIServer(('', 8001), app)
+    http_server.serve_forever()
