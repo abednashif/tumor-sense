@@ -678,6 +678,16 @@ input.upload-file {
     color: var(--text);
 }
 
+.add-new-patient-container{
+    margin: 0 auto;
+}
+
+.add-patient-submit{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 5rem;
+}
+
 
 /* Error  handling  CSS */
 
@@ -706,8 +716,4 @@ input.upload-file {
     width: 120px;
     height: 50px;
     z-index: 99;
-}
-
-.disable-brothers{
-
 }

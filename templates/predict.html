@@ -87,19 +87,75 @@
                     <div class="p-2 text-center title">
                         {{ title }} Tumor Detection
                     </div>
-                    <div class="patient-container">
-                        <div class="patient-card-predict">
-                            <h6>{{ patient_name | safe}}</h6>
-                            <p>
-                                <span class="fw-bold">Age: </span>
-                                <span>{{ patient_age | safe}}</span>
-                            </p>
-                            <p>
-                                <span class="fw-bold">Last Checkup: </span>
-                                <span>{{ patient_checkup | safe }}</span>
-                            </p>
+                    {% if patient_name  %}
+                        <div class="patient-container">
+                            <div class="patient-card-predict">
+                                <h6>{{ patient_name | safe}}</h6>
+                                <p>
+                                    <span class="fw-bold">Age: </span>
+                                    <span>{{ patient_age | safe}}</span>
+                                </p>
+                                <p>
+                                    <span class="fw-bold">Last Checkup: </span>
+                                    <span>{{ patient_checkup | safe }}</span>
+                                </p>
+                            </div>
                         </div>
-                    </div>
+                    {% endif %}
+
+                    {% if prediction and (not patient_name and not patient_age and not patient_checkup) %}
+                        <div class="alert alert-warning">
+                            No patient was selected for this prediction.
+                        </div>
+
+                        <div class="add-patient-container add-new-patient-container mt-5 col-6">
+                            <form method="POST" action="{{ url_for('add_patient') }}" class="patient-form">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="firstname" class="form-label">First Name</label>
+                                        <input type="text" class="form-control" id="firstname" name="firstname" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="lastname" class="form-label">Last Name</label>
+                                        <input type="text" class="form-control" id="lastname" name="lastname" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="age" class="form-label">Age</label>
+                                        <input type="number" class="form-control" id="age" name="age" min="0" max="150" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="sex" class="form-label">Sex</label>
+                                        <select class="form-select" id="sex" name="sex" required>
+                                            <option value="">Select sex...</option>
+                                            <option value="M">Male</option>
+                                            <option value="F">Female</option>
+                                        </select>
+                                    </div>
+                                    <!--<div class="col-md-6">
+                                        <label for="tumor_type" class="form-label">Tumor Type</label>
+                                        <select class="form-select" id="tumor_type" name="tumor_type" required>
+                                            <option value="">Select tumor type...</option>
+                                            {% if session['doctor_type'] == 'brain' %}
+                                                <option value="Glioma">Glioma</option>
+                                                <option value="Meningioma">Meningioma</option>
+                                                <option value="Normal">Normal</option>
+                                                <option value="Adenoma">Adenoma</option>
+                                            {% elif session['doctor_type'] == 'lung' %}
+                                                <option value="Adenocarcinoma">Adenocarcinoma</option>
+                                                <option value="Large cell carcinoma">Large cell carcinoma</option>
+                                                <option value="Normal">Normal</option>
+                                                <option value="Squamous cell carcinoma">Squamous cell carcinoma</option>
+                                            {% endif %}
+                                        </select>
+                                    </div>-->
+                                    <div class="add-patient-submit">
+                                        <button type="submit" class="btn-gradient-purple-blue">Add Patient</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    {% endif %}
+
                     <div class="result-container">
                         <div class="d-flex justify-content-between align-items-center p-3">
                             <div class="prediction-result">{{ prediction }}</div>
@@ -162,15 +218,6 @@
             });
         }
 
-        if (!selectedPatientId) {
-            event.preventDefault();
-            Swal.fire({
-                title: 'Error!',
-                text: 'Please select a patient before predicting.',
-                icon: 'error',
-                confirmButtonText: 'OK'
-            });
-        }
     });
 
     let report_text = "{{ report_text }}";

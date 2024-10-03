@@ -1,5 +1,4 @@
 import os
-from functools import cache
 import numpy as np
 from markupsafe import Markup
 from tensorflow.keras.models import load_model
@@ -9,7 +8,6 @@ from tensorflow.keras.preprocessing.image import load_img, img_to_array, array_t
 class BrainTumor:
     _MRI = 'MRI'
 
-    @cache
     def __init__(self):
         current_directory = os.path.dirname(__file__)
         # model_path = os.path.join(current_directory, 'model.h5')
@@ -21,7 +19,6 @@ class BrainTumor:
 #         self.detect_mri = load_model(mriDetect_path)
 #         self.detect_mri.compile(optimizer=Adam(), loss='binary_crossentropy', metrics=['accuracy'])
 
-    @cache
     def predict(self, data):
         tumor_types = {
             'Glioma': Markup(
@@ -64,7 +61,6 @@ class BrainTumor:
 
 class LungTumor:
     _CT = 'CT'
-    @cache
     def __init__(self):
         current_directory = os.path.dirname(__file__)
         model_path = os.path.join(current_directory, 'models/LungTumorModel.h5')
@@ -76,25 +72,24 @@ class LungTumor:
         # self.detect_CT = load_model(CTDetect_path)
         # self.detect_CT.compile(optimizer=Adam(), loss='binary_crossentropy', metrics=['accuracy'])
 
-    @cache
     def predict(self, data):
 
         tumor_types = {
-            'Adenocarcinoma: left > lower lobe T2_N0_M0_Ib': Markup(
+            'Adenocarcinoma': Markup(
                         'Adenocarcinoma is a type of cancer that develops in the glandular cells of epithelial tissue.//It can occur in various organs, including the lungs.//In this case, the tumor is located in the left lower lobe of the lung.//The TNM staging classification indicates that the tumor is relatively small (T2),//has not spread to nearby lymph nodes (N0), and has no distant metastasis (M0).//This suggests an early stage of adenocarcinoma.//'),
 
-            'Large cell carcinoma: left > hilum T2_N2_M0_IIIa': Markup(
+            'Large cell carcinoma': Markup(
                 'Large cell carcinoma is a type of non-small cell lung cancer (NSCLC).//It is characterized by the presence of large, abnormal-looking cells in the lung tissue.//The tumor is located in the left hilum, which is the area where the bronchi and blood vessels enter the lung.//The TNM staging classification indicates that the tumor is relatively large (T2),//has spread to nearby lymph nodes (N2), and has no distant metastasis (M0).//This suggests an advanced stage of large cell carcinoma.//'),
 
             'Normal': Markup(
                 'Normal refers to the absence of any abnormalities or tumors.//A "Normal" result indicates that no suspicious masses or lesions were found on the scan.//It is important to note that "Normal" results do not rule out the possibility of future abnormalities//and regular screenings may be recommended for monitoring purposes.//'),
 
-            'Squamous cell carcinoma: left > hilum T1_N2_M0_IIIa': Markup(
+            'Squamous cell carcinoma': Markup(
                 'Squamous cell carcinoma is another type of non-small cell lung cancer (NSCLC).//It arises from the squamous cells lining the airways in the lungs.//The tumor is located in the left hilum, the area where the bronchi and blood vessels enter the lung.//The TNM staging classification indicates that the tumor is relatively small (T1),//has spread to nearby lymph nodes (N2), and has no distant metastasis (M0).//This suggests an advanced stage of squamous cell carcinoma.//')
         }
 
-        index = ['Adenocarcinoma: left > lower lobe T2_N0_M0_Ib', 'Large cell carcinoma: left > hilum T2_N2_M0_IIIa'
-            , 'Normal', 'Squamous cell carcinoma: left > hilum T1_N2_M0_IIIa']
+        index = ['Adenocarcinoma', 'Large cell carcinoma'
+            , 'Normal', 'Squamous cell carcinoma']
 
 
         data = load_img(data, target_size=(224, 224))

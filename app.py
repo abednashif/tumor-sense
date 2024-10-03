@@ -336,8 +336,9 @@ def login():
 
         session_info = create_user_session(user)
         _user_id = user['id']
+        _user_type = user['doctor_type']
 
-        patients_count_30_days = User.patients_exceeded_30_days_count(_user_id)
+        patients_count_30_days = User.patients_exceeded_30_days_count(_user_id, _user_type)
         session['patients_count'] = patients_count_30_days
 
         return jsonify({
@@ -470,8 +471,6 @@ def predict(model_type):
                 elif type == 'brain':
                     brain_model = BrainTumor()
                     prediction, report_text = brain_model.predict(file_path)
-                    prediction = "Meningioma"
-                    report_text = "Meningiomas are benign (non-cancerous) tumors that arise from the meninges, the protective membranes surrounding the brain and spinal cord. They are the second most common type of primary brain tumor after gliomas.//Symptoms: Symptoms can vary depending on the location and size of the tumor. They may include headaches, seizures, vision problems, hearing loss, and weakness.//Treatment: Treatment options include observation (for slow-growing tumors), surgery, and radiation therapy. The specific approach depends on the size, location, and growth rate of the meningioma.//Note: While most meningiomas are benign, a small percentage can be atypical or malignant (cancerous). These require more aggressive treatment.//"
                     _prediction_title = "Brain Tumor Detection"
                 else:
                     return "Model does not exist!"
@@ -486,7 +485,7 @@ def predict(model_type):
                 if(patient_id != None and patient_name != None and patient_age != None):
                     update_patient_info(patient_id, prediction, type)
                 else:
-                    print("Failed to update patient info, one or more arguments are null")
+                    print("Unregistered patient detected")
 
             except Exception as e:
                 raise ValueError("Failed to update patient info.")
@@ -515,6 +514,32 @@ def predict(model_type):
 
     return redirect(url_for('index'))
 
+
+@app.route('/add-patient', methods=['POST'])
+@login_required
+def add_patient():
+    if request.method == 'POST':
+        patient_data = {
+            'firstname': request.form.get('firstname'),
+            'lastname': request.form.get('lastname'),
+            'age': request.form.get('age'),
+            'sex': request.form.get('sex'),
+            'tumor_type': _prediction,
+            'doctor_id': current_user.id,
+            'last_checkup': date.today().isoformat()
+        }
+
+        if patient_data['tumor_type'].lower() == 'normal':
+            if current_user.doctor_type == 'lung':
+                patient_data['tumor_type'] = 'Normal_l'
+            elif current_user.doctor_type == 'brain':
+                patient_data['tumor_type'] = 'Normal_b'
+
+        if User.add_patient(patient_data):
+            return redirect(url_for('view_prediction_page', model_type=current_user.doctor_type))
+
+    return redirect(url_for('view_prediction_page', model_type=current_user.doctor_type))
+
 @app.route('/profile/<string:username>', methods=['GET'])
 @login_required
 def get_profile(username):
@@ -522,7 +547,7 @@ def get_profile(username):
         return redirect(url_for('index'))
 
     if username == current_user.username:
-        patients = User.get_patients_by_doctor_id(current_user.id)
+        patients = User.get_patients_by_doctor_id(current_user.id, current_user.doctor_type)
         return render_template('profile.html', user=current_user, patients=patients, is_authenticated=True)
     return redirect(url_for('index'))
 
@@ -538,7 +563,7 @@ def view_prediction_page(model_type):
 
     load_tumorTypesCounts(user_id)
     load_average_age(user_id, doctor_type)
-    patients = User.get_patients_by_doctor_id(user_id)
+    patients = User.get_patients_by_doctor_id(user_id, doctor_type)
 
     if model_type == 'lung':
         return render_template('predict.html', detection_counter=json.dumps(lung_detection_counter),
@@ -569,7 +594,7 @@ def decrypt_file(filename):
 
 if __name__ == '__main__':
     # app.run(debug=True, port=8002)
-    # app.run(host='0.0.0.0', port=8001)
+    app.run(host='0.0.0.0', port=8001)
     # production
-    http_server = WSGIServer(('', 8001), app)
-    http_server.serve_forever()
+    # http_server = WSGIServer(('', 8001), app)
+    # http_server.serve_forever()
