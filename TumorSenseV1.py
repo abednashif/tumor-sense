@@ -1,4 +1,5 @@
 import os
+from functools import cache
 import numpy as np
 from markupsafe import Markup
 from tensorflow.keras.models import load_model
@@ -8,6 +9,7 @@ from tensorflow.keras.preprocessing.image import load_img, img_to_array, array_t
 class BrainTumor:
     _MRI = 'MRI'
 
+    @cache
     def __init__(self):
         current_directory = os.path.dirname(__file__)
         # model_path = os.path.join(current_directory, 'model.h5')
@@ -19,6 +21,7 @@ class BrainTumor:
 #         self.detect_mri = load_model(mriDetect_path)
 #         self.detect_mri.compile(optimizer=Adam(), loss='binary_crossentropy', metrics=['accuracy'])
 
+    @cache
     def predict(self, data):
         tumor_types = {
             'Glioma': Markup(
@@ -61,6 +64,7 @@ class BrainTumor:
 
 class LungTumor:
     _CT = 'CT'
+    @cache
     def __init__(self):
         current_directory = os.path.dirname(__file__)
         model_path = os.path.join(current_directory, 'models/LungTumorModel.h5')
@@ -72,6 +76,7 @@ class LungTumor:
         # self.detect_CT = load_model(CTDetect_path)
         # self.detect_CT.compile(optimizer=Adam(), loss='binary_crossentropy', metrics=['accuracy'])
 
+    @cache
     def predict(self, data):
 
         tumor_types = {
